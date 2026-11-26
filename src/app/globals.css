@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+/* 야외 시인성: 라이트 고대비 단일 테마 */
+@theme {
+  --color-court: #0f5132; /* 진한 코트 그린 — 주요 액션 */
+  --color-court-light: #e6f2ec;
+  --color-ball: #d9f84a; /* 테니스공 라임 — 하이라이트 */
+  --color-ink: #0b0f14;
+  --color-muted: #4b5563;
+  --font-sans: system-ui, -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background: #f3f4f6;
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+/* 숫자 정렬 */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
