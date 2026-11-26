@@ -3,10 +3,11 @@ import type { ButtonHTMLAttributes, ReactNode } from "react";
 type Variant = "primary" | "secondary" | "danger" | "ghost";
 
 const VARIANTS: Record<Variant, string> = {
-  primary: "bg-court text-white active:bg-court/90 disabled:bg-gray-300 disabled:text-gray-500",
-  secondary: "bg-white text-ink border-2 border-ink/15 active:bg-gray-100 disabled:text-gray-400",
-  danger: "bg-red-700 text-white active:bg-red-800 disabled:bg-gray-300",
-  ghost: "bg-transparent text-court active:bg-court-light",
+  primary:
+    "bg-primary text-primary-fg shadow-sm shadow-primary/25 hover:bg-primary-hover disabled:bg-subtle disabled:text-faint disabled:shadow-none",
+  secondary: "border border-line-strong bg-surface text-ink shadow-xs hover:bg-subtle disabled:text-faint",
+  danger: "bg-danger text-white shadow-sm shadow-danger/25 hover:opacity-90 disabled:bg-subtle disabled:text-faint",
+  ghost: "bg-transparent text-primary-text hover:bg-primary-soft",
 };
 
 export function Button({
@@ -17,7 +18,7 @@ export function Button({
   return (
     <button
       type="button"
-      className={`inline-flex min-h-12 items-center justify-center gap-1 rounded-xl px-4 text-base font-bold transition-colors disabled:cursor-not-allowed ${VARIANTS[variant]} ${className}`}
+      className={`inline-flex min-h-12 items-center justify-center gap-1.5 rounded-xl px-4 text-[15px] font-semibold transition active:scale-[0.98] disabled:cursor-not-allowed disabled:active:scale-100 ${VARIANTS[variant]} ${className}`}
       {...props}
     />
   );
@@ -25,35 +26,58 @@ export function Button({
 
 export function PageTitle({ children, sub }: { children: ReactNode; sub?: ReactNode }) {
   return (
-    <div className="px-4 pt-5 pb-3">
-      <h1 className="text-2xl font-extrabold tracking-tight">{children}</h1>
-      {sub && <p className="mt-1 text-sm font-medium text-muted">{sub}</p>}
+    <div className="px-4 pt-6 pb-4">
+      <h1 className="text-2xl font-bold tracking-tight">{children}</h1>
+      {sub && <p className="mt-1 text-sm text-muted">{sub}</p>}
     </div>
   );
 }
 
 export function Card({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return <div className={`rounded-2xl border-2 border-ink/10 bg-white ${className}`}>{children}</div>;
+  return <div className={`rounded-2xl border border-line bg-surface shadow-xs ${className}`}>{children}</div>;
+}
+
+export function SectionTitle({ children, aside }: { children: ReactNode; aside?: ReactNode }) {
+  return (
+    <div className="flex items-baseline justify-between px-4 pt-6 pb-2">
+      <h2 className="text-base font-semibold">{children}</h2>
+      {aside && <span className="text-xs text-muted">{aside}</span>}
+    </div>
+  );
 }
 
 export function StatusBadge({ status }: { status: "IN_PROGRESS" | "COMPLETED" }) {
   return status === "IN_PROGRESS" ? (
-    <span className="inline-flex items-center gap-1 rounded-full bg-ball px-2.5 py-0.5 text-xs font-extrabold text-ink">
-      <span className="size-2 animate-pulse rounded-full bg-red-600" /> 진행중
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-soft px-2.5 py-1 text-xs font-semibold text-primary-text">
+      <span className="relative flex size-1.5">
+        <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-60" />
+        <span className="relative inline-flex size-1.5 rounded-full bg-primary" />
+      </span>
+      진행중
     </span>
   ) : (
-    <span className="rounded-full bg-gray-200 px-2.5 py-0.5 text-xs font-bold text-gray-700">종료</span>
+    <span className="rounded-full bg-subtle px-2.5 py-1 text-xs font-medium text-muted">종료</span>
   );
 }
 
+export function Notice({ tone = "info", children }: { tone?: "info" | "muted" | "warning" | "danger"; children: ReactNode }) {
+  const tones = {
+    info: "bg-primary-soft text-primary-text",
+    muted: "bg-subtle text-muted",
+    warning: "bg-warning-soft text-warning",
+    danger: "bg-danger-soft text-danger",
+  };
+  return <p className={`flex items-start gap-2 rounded-xl px-3.5 py-2.5 text-sm font-medium ${tones[tone]}`}>{children}</p>;
+}
+
 export function Empty({ children }: { children: ReactNode }) {
-  return <p className="px-4 py-16 text-center text-base font-medium text-muted">{children}</p>;
+  return <p className="px-4 py-20 text-center text-sm text-muted">{children}</p>;
 }
 
 export function Loading() {
   return (
-    <div className="flex justify-center py-16" role="status" aria-label="불러오는 중">
-      <span className="size-8 animate-spin rounded-full border-4 border-court/20 border-t-court" />
+    <div className="flex justify-center py-20" role="status" aria-label="불러오는 중">
+      <span className="size-7 animate-spin rounded-full border-2 border-primary/20 border-t-primary" />
     </div>
   );
 }

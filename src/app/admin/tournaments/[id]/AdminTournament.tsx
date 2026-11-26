@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import useSWR from "swr";
 import { TournamentView } from "@/components/TournamentView";
-import { Button } from "@/components/ui";
+import { AlertTriangle, ChevronLeft, ExternalLink, Flag, Lock, LockOpen, Pencil, Plus, Trash2 } from "lucide-react";
+import { Button, Notice } from "@/components/ui";
 import { api, fetcher } from "@/lib/client";
 import type { Member } from "@/lib/types";
 import type { TournamentDetail } from "@/server/repo";
@@ -39,25 +40,42 @@ export function AdminTournament({ initial, members }: { initial: TournamentDetai
 
   return (
     <div>
-      <div className="flex items-center justify-between px-4 pt-3">
-        <Link href="/admin" className="text-sm font-bold text-court">
-          ← 대회 목록
+      <div className="flex items-center justify-between px-4 pt-4">
+        <Link
+          href="/admin"
+          className="-ml-1.5 inline-flex items-center gap-0.5 text-sm font-medium text-muted hover:text-ink"
+        >
+          <ChevronLeft className="size-4" />
+          대회 목록
         </Link>
-        <Link href={`/tournaments/${tournament.id}`} className="text-sm font-bold text-muted underline">
+        <Link
+          href={`/tournaments/${tournament.id}`}
+          className="inline-flex items-center gap-1 text-sm font-medium text-primary-text hover:underline"
+        >
           공개 화면 보기
+          <ExternalLink className="size-3.5" />
         </Link>
       </div>
 
-      {open ? (
-        <p className="mx-4 mt-2 rounded-lg bg-court-light px-3 py-2 text-sm font-bold text-court">
-          ✏️ 경기 카드를 누르면 점수를 입력/수정할 수 있습니다.
-        </p>
-      ) : (
-        <p className="mx-4 mt-2 rounded-lg bg-gray-100 px-3 py-2 text-sm font-bold text-muted">
-          🔒 종료된 대회입니다. 수정하려면 아래에서 잠금을 해제하세요.
-        </p>
-      )}
-      {error && <p className="mx-4 mt-2 rounded-lg bg-red-50 p-3 font-bold text-red-700">{error}</p>}
+      <div className="space-y-2 px-4 pt-3">
+        {open ? (
+          <Notice tone="info">
+            <Pencil className="mt-0.5 size-4 shrink-0" />
+            경기 카드를 누르면 점수를 입력·수정할 수 있습니다.
+          </Notice>
+        ) : (
+          <Notice tone="muted">
+            <Lock className="mt-0.5 size-4 shrink-0" />
+            종료된 대회입니다. 수정하려면 아래에서 잠금을 해제하세요.
+          </Notice>
+        )}
+        {error && (
+          <Notice tone="danger">
+            <AlertTriangle className="mt-0.5 size-4 shrink-0" />
+            {error}
+          </Notice>
+        )}
+      </div>
 
       <TournamentView
         initial={detail}
@@ -66,30 +84,34 @@ export function AdminTournament({ initial, members }: { initial: TournamentDetai
           open && g.playedCount === 0 ? (
             <Button
               variant="ghost"
-              className="w-full text-red-700"
-              onClick={() => confirm(`'${g.name}' 그룹을 삭제할까요?`) && act(() => api(`/api/groups/${g.id}`, "DELETE"))}
+              className="w-full text-danger"
+              onClick={() =>
+                confirm(`'${g.name}' 그룹을 삭제할까요?`) && act(() => api(`/api/groups/${g.id}`, "DELETE"))
+              }
             >
-              이 그룹 삭제 (점수 입력 전에만 가능)
+              <Trash2 className="size-4" />이 그룹 삭제 (점수 입력 전에만 가능)
             </Button>
           ) : null
         }
       />
 
-      <div className="space-y-2 px-4 pt-4">
+      <div className="space-y-2 px-4 pt-6">
         {open && (
           <>
             <Button variant="secondary" className="w-full" onClick={() => setWizard(true)}>
-              ＋ 그룹 추가
+              <Plus className="size-5" />
+              그룹 추가
             </Button>
             {groups.length > 0 && (
               <Button className="w-full" onClick={() => setCompleting(true)}>
-                🏁 대회 종료 · 수상자 확정
+                <Flag className="size-5" />
+                대회 종료 · 수상자 확정
               </Button>
             )}
             {!anyScore && (
               <Button
                 variant="ghost"
-                className="w-full text-red-700"
+                className="w-full text-danger"
                 onClick={() =>
                   confirm("대회를 삭제할까요? 모든 그룹이 함께 삭제됩니다.") &&
                   act(async () => {
@@ -98,6 +120,7 @@ export function AdminTournament({ initial, members }: { initial: TournamentDetai
                   })
                 }
               >
+                <Trash2 className="size-4" />
                 대회 삭제
               </Button>
             )}
@@ -108,11 +131,13 @@ export function AdminTournament({ initial, members }: { initial: TournamentDetai
             variant="secondary"
             className="w-full"
             onClick={() =>
-              confirm("잠금을 해제하면 점수를 수정할 수 있고, 다시 종료할 때까지 통계·명예의 전당에서 제외됩니다. 해제할까요?") &&
-              act(() => api(`/api/tournaments/${tournament.id}/reopen`, "POST"))
+              confirm(
+                "잠금을 해제하면 점수를 수정할 수 있고, 다시 종료할 때까지 통계·명예의 전당에서 제외됩니다. 해제할까요?",
+              ) && act(() => api(`/api/tournaments/${tournament.id}/reopen`, "POST"))
             }
           >
-            🔓 잠금 해제
+            <LockOpen className="size-5" />
+            잠금 해제
           </Button>
         )}
       </div>
@@ -121,7 +146,9 @@ export function AdminTournament({ initial, members }: { initial: TournamentDetai
         <GroupWizard
           tournamentId={tournament.id}
           members={members}
-          takenMemberIds={new Set(groups.flatMap((g) => g.participants.map((p) => p.memberId).filter((x): x is string => !!x)))}
+          takenMemberIds={
+            new Set(groups.flatMap((g) => g.participants.map((p) => p.memberId).filter((x): x is string => !!x)))
+          }
           defaultName={groups.length === 0 ? "금배조" : groups.length === 1 ? "은배조" : ""}
           onClose={() => setWizard(false)}
           onCreated={() => {

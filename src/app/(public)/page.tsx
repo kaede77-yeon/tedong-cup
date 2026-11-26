@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { TournamentView } from "@/components/TournamentView";
-import { Empty, Loading } from "@/components/ui";
+import { Empty, Loading, Notice } from "@/components/ui";
 import { load } from "@/server/page";
 import { getFeaturedTournamentId, getTournamentDetail } from "@/server/repo";
 
@@ -23,12 +23,16 @@ async function Featured() {
   return (
     <>
       {detail.tournament.status === "COMPLETED" && (
-        <p className="bg-gray-100 px-4 py-2 text-sm font-semibold text-muted">
-          진행 중인 대회가 없어 최근 대회를 표시합니다.{" "}
-          <Link href="/tournaments" className="text-court underline">
-            전체 기록
-          </Link>
-        </p>
+        <div className="px-4 pt-4">
+          <Notice tone="muted">
+            <span>
+              진행 중인 대회가 없어 최근 대회를 표시합니다.{" "}
+              <Link href="/tournaments" className="font-medium text-primary-text underline-offset-4 hover:underline">
+                전체 기록
+              </Link>
+            </span>
+          </Notice>
+        </div>
       )}
       <TournamentView initial={detail} />
     </>

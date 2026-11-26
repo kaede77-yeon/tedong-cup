@@ -1,7 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Button } from "@/components/ui";
+import { Check, Shuffle, X } from "lucide-react";
+import { Button, Notice } from "@/components/ui";
 import { api } from "@/lib/client";
 import { SUPPORTED_SIZES } from "@/lib/hanulRules";
 import type { MatchMethod, Member, Side } from "@/lib/types";
@@ -60,7 +61,10 @@ export function GroupWizard({
   function add(e: Omit<Entry, "key" | "side">) {
     if (targetFull) return;
     const side = isAB ? target : undefined;
-    setEntries((prev) => [...prev, { ...e, side, key: `${e.memberId ?? "g"}:${e.displayName}:${prev.length}:${Date.now()}` }]);
+    setEntries((prev) => [
+      ...prev,
+      { ...e, side, key: `${e.memberId ?? "g"}:${e.displayName}:${prev.length}:${Date.now()}` },
+    ]);
     // AB: 한 조가 다 차면 다른 조로 자동 전환
     if (isAB && countSide(target) + 1 >= half) setTarget(target === "A" ? "B" : "A");
   }
@@ -85,7 +89,12 @@ export function GroupWizard({
         name,
         method,
         size,
-        entries: entries.map(({ memberId, displayName, side, register }) => ({ memberId, displayName, side, register })),
+        entries: entries.map(({ memberId, displayName, side, register }) => ({
+          memberId,
+          displayName,
+          side,
+          register,
+        })),
       });
       onCreated();
     } catch (e) {
@@ -104,15 +113,17 @@ export function GroupWizard({
       <div
         key={side ?? "all"}
         onClick={() => side && setTarget(side)}
-        className={`rounded-2xl border-2 p-3 ${isAB && active ? "border-court bg-court-light" : "border-ink/10"}`}
+        className={`rounded-2xl border p-4 shadow-xs transition ${
+          isAB && active ? "border-primary bg-primary-soft ring-4 ring-primary/10" : "border-line bg-surface"
+        } ${isAB ? "cursor-pointer" : ""}`}
       >
-        <p className="flex justify-between text-sm font-extrabold">
+        <p className="flex justify-between text-sm font-semibold">
           <span>{side ? `${side}그룹 ${side === "A" ? "(숫자 번호)" : "(영문 번호)"}` : "참가자"}</span>
-          <span className={list.length === cap ? "text-court" : "text-muted"}>
+          <span className={`tabular ${list.length === cap ? "text-primary-text" : "text-muted"}`}>
             {list.length}/{cap}
           </span>
         </p>
-        <ul className="mt-2 flex flex-wrap gap-1.5">
+        <ul className="mt-3 flex flex-wrap gap-1.5">
           {list.map((e) => (
             <li key={e.key}>
               <button
@@ -120,51 +131,57 @@ export function GroupWizard({
                   ev.stopPropagation();
                   setEntries((prev) => prev.filter((x) => x.key !== e.key));
                 }}
-                className="flex min-h-11 items-center gap-1 rounded-full border-2 border-ink/15 bg-white px-3 text-sm font-bold"
+                className="chip pr-2.5"
                 aria-label={`${e.displayName} 제거`}
               >
                 {e.displayName}
-                {!e.memberId && <span className="text-xs text-muted">{e.register ? "(신규)" : "(게스트)"}</span>}
-                <span className="text-muted">✕</span>
+                {!e.memberId && <span className="text-xs text-muted">{e.register ? "신규" : "게스트"}</span>}
+                <X className="size-3.5 text-muted" aria-hidden />
               </button>
             </li>
           ))}
-          {list.length === 0 && <li className="text-sm text-muted">{isAB ? "이 칸을 누른 뒤 아래에서 추가" : "아래에서 추가하세요"}</li>}
+          {list.length === 0 && (
+            <li className="text-sm text-muted">{isAB ? "이 칸을 누른 뒤 아래에서 추가" : "아래에서 추가하세요"}</li>
+          )}
         </ul>
       </div>
     );
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-center bg-black/50">
-      <div role="dialog" aria-modal="true" aria-label="그룹 추가" className="flex w-full max-w-[480px] flex-col bg-white">
-        <header className="flex items-center justify-between border-b-2 border-ink/10 px-4 py-3">
+    <div className="fixed inset-0 z-50 flex justify-center bg-black/40 backdrop-blur-[2px]">
+      <div role="dialog" aria-modal="true" aria-label="그룹 추가" className="flex w-full max-w-[480px] flex-col bg-bg">
+        <header className="flex items-center justify-between px-4 pt-4">
           <div>
-            <p className="text-xs font-bold text-muted">
-              {step + 1}/{STEPS.length} 단계
+            <p className="text-xs font-medium text-muted">
+              그룹 추가 · {step + 1}/{STEPS.length}
             </p>
-            <h2 className="text-xl font-extrabold">{STEPS[step]}</h2>
+            <h2 className="mt-0.5 text-xl font-bold tracking-tight">{STEPS[step]}</h2>
           </div>
-          <button onClick={onClose} className="min-h-11 px-2 text-base font-bold text-muted">
-            닫기
+          <button
+            onClick={onClose}
+            className="-mr-2 grid size-10 place-items-center rounded-full text-muted transition hover:bg-subtle hover:text-ink"
+            aria-label="닫기"
+          >
+            <X className="size-5" />
           </button>
         </header>
-        <div className="flex gap-1 px-4 pt-2">
+        <div className="flex gap-1 px-4 pt-3 pb-1">
           {STEPS.map((s, i) => (
-            <span key={s} className={`h-1.5 flex-1 rounded-full ${i <= step ? "bg-court" : "bg-gray-200"}`} />
+            <span key={s} className={`h-1 flex-1 rounded-full transition ${i <= step ? "bg-primary" : "bg-subtle"}`} />
           ))}
         </div>
 
-        <div className="flex-1 overflow-y-auto px-4 py-4">
+        <div className="flex-1 overflow-y-auto px-4 py-5">
           {step === 0 && (
             <label className="block">
-              <span className="text-sm font-bold">그룹명</span>
+              <span className="text-sm font-medium text-muted">그룹명</span>
               <input
                 autoFocus
                 value={name}
                 placeholder="예: 금배조, 은배조"
                 onChange={(e) => setName(e.target.value)}
-                className="mt-1 h-14 w-full rounded-xl border-2 border-ink/20 px-4 text-lg"
+                className="input mt-1.5 h-14 text-lg"
               />
             </label>
           )}
@@ -174,7 +191,11 @@ export function GroupWizard({
               {(
                 [
                   ["HANUL_AA", "한울AA 방식", "단일 그룹 5~16명. 매 경기 파트너와 상대가 고르게 바뀝니다."],
-                  ["HANUL_AB", "한울AB 방식", "A/B 두 그룹(동수) 8·10·12·14·16명. 파트너는 항상 반대 그룹 선수입니다. (예: 혼복)"],
+                  [
+                    "HANUL_AB",
+                    "한울AB 방식",
+                    "A/B 두 그룹(동수) 8·10·12·14·16명. 파트너는 항상 반대 그룹 선수입니다. (예: 혼복)",
+                  ],
                 ] as const
               ).map(([m, title, desc]) => (
                 <button
@@ -186,11 +207,15 @@ export function GroupWizard({
                       setEntries([]);
                     }
                   }}
-                  className={`block w-full rounded-2xl border-4 p-4 text-left ${method === m ? "border-court bg-court-light" : "border-ink/10"}`}
+                  className={`block w-full rounded-2xl border p-4 text-left shadow-xs transition active:scale-[0.99] ${
+                    method === m
+                      ? "border-primary bg-primary-soft ring-4 ring-primary/10"
+                      : "border-line bg-surface hover:border-line-strong"
+                  }`}
                   aria-pressed={method === m}
                 >
-                  <p className="text-lg font-extrabold">{title}</p>
-                  <p className="mt-1 text-sm font-medium text-muted">{desc}</p>
+                  <p className="text-base font-semibold">{title}</p>
+                  <p className="mt-1 text-sm text-muted">{desc}</p>
                 </button>
               ))}
             </div>
@@ -206,13 +231,17 @@ export function GroupWizard({
                       setSize(n);
                       setEntries((prev) => (prev.length > n ? [] : prev));
                     }}
-                    className={`tabular h-14 rounded-xl border-2 text-xl font-black ${size === n ? "border-court bg-court text-white" : "border-ink/15"}`}
+                    className={`tabular h-14 rounded-xl border text-lg font-semibold shadow-xs transition active:scale-95 ${
+                      size === n
+                        ? "border-primary bg-primary text-primary-fg shadow-primary/25"
+                        : "border-line-strong bg-surface hover:bg-subtle"
+                    }`}
                   >
                     {n}명
                   </button>
                 ))}
               </div>
-              {size && <p className="mt-4 text-sm font-medium text-muted">총 {size}경기 · 1인당 4경기</p>}
+              {size && <p className="mt-4 text-sm text-muted">총 {size}경기 · 1인당 4경기</p>}
             </>
           )}
 
@@ -227,18 +256,19 @@ export function GroupWizard({
                 entryList()
               )}
 
-              <div className="rounded-2xl border-2 border-ink/10 p-3">
-                <p className="text-sm font-extrabold">
-                  명부에서 불러오기 {isAB && <span className="text-court">→ {target}그룹에 추가</span>}
+              <div className="rounded-2xl border border-line bg-surface p-4 shadow-xs">
+                <p className="text-sm font-semibold">
+                  명부에서 불러오기{" "}
+                  {isAB && <span className="font-medium text-primary-text">→ {target}그룹에 추가</span>}
                 </p>
                 <input
                   type="search"
                   placeholder="이름 검색"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  className="mt-2 h-11 w-full rounded-xl border-2 border-ink/20 px-3 text-base"
+                  className="input mt-2 h-11"
                 />
-                <ul className="mt-2 flex max-h-56 flex-wrap gap-1.5 overflow-y-auto">
+                <ul className="mt-3 flex max-h-56 flex-wrap gap-1.5 overflow-y-auto">
                   {available.map((m) => {
                     const picked = chosen.has(m.id);
                     return (
@@ -246,11 +276,9 @@ export function GroupWizard({
                         <button
                           disabled={picked || targetFull}
                           onClick={() => add({ memberId: m.id, displayName: label(m) })}
-                          className={`min-h-11 rounded-full border-2 px-3 text-sm font-bold ${
-                            picked ? "border-court bg-court text-white" : "border-ink/15 disabled:opacity-40"
-                          }`}
+                          className={`chip ${picked ? "chip-on" : ""}`}
                         >
-                          {picked && "✓ "}
+                          {picked && <Check className="size-3.5" aria-hidden />}
                           {label(m)}
                         </button>
                       </li>
@@ -259,26 +287,31 @@ export function GroupWizard({
                   {available.length === 0 && <li className="text-sm text-muted">추가할 수 있는 회원이 없습니다.</li>}
                 </ul>
                 {takenMemberIds.size > 0 && (
-                  <p className="mt-2 text-xs font-medium text-muted">이 대회의 다른 그룹에 참가 중인 회원은 표시되지 않습니다.</p>
+                  <p className="mt-3 text-xs text-muted">이 대회의 다른 그룹에 참가 중인 회원은 표시되지 않습니다.</p>
                 )}
               </div>
 
-              <div className="rounded-2xl border-2 border-ink/10 p-3">
-                <p className="text-sm font-extrabold">직접 입력 (게스트·신규)</p>
-                <div className="mt-2 flex gap-2">
+              <div className="rounded-2xl border border-line bg-surface p-4 shadow-xs">
+                <p className="text-sm font-semibold">직접 입력 (게스트·신규)</p>
+                <div className="mt-3 flex gap-2">
                   <input
                     value={guest}
                     placeholder="이름"
                     onChange={(e) => setGuest(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addGuest())}
-                    className="h-11 min-w-0 flex-1 rounded-xl border-2 border-ink/20 px-3 text-base"
+                    className="input h-11 min-w-0 flex-1"
                   />
                   <Button className="min-h-11" disabled={!guest.trim() || targetFull} onClick={addGuest}>
                     추가
                   </Button>
                 </div>
-                <label className="mt-2 flex items-center gap-2 text-sm font-semibold">
-                  <input type="checkbox" className="size-5" checked={registerGuest} onChange={(e) => setRegisterGuest(e.target.checked)} />
+                <label className="mt-3 flex items-center gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    className="size-5 accent-primary"
+                    checked={registerGuest}
+                    onChange={(e) => setRegisterGuest(e.target.checked)}
+                  />
                   회원 명부에도 등록 (누적 통계에 포함)
                 </label>
               </div>
@@ -287,30 +320,38 @@ export function GroupWizard({
 
           {step === 4 && size && (
             <div className="space-y-3">
-              <div className="rounded-2xl bg-gray-50 p-4 text-base">
-                <p>
-                  <b>그룹</b> {name}
-                </p>
-                <p>
-                  <b>방식</b> {isAB ? "한울AB" : "한울AA"} · {size}명
-                </p>
-                <p>
-                  <b>경기</b> 총 {size}경기 (1인당 4경기)
-                </p>
-              </div>
-              <p className="rounded-xl bg-ball px-4 py-3 text-base font-bold">
-                🎲 생성 버튼을 누르면 참가자 순번이 {isAB ? "A·B그룹 안에서 각각 " : ""}무작위로 배정되고 대진표가 만들어집니다.
-              </p>
-              <p className="text-sm font-medium text-muted">
+              <dl className="divide-y divide-line rounded-2xl border border-line bg-surface text-[15px] shadow-xs">
+                {(
+                  [
+                    ["그룹", name],
+                    ["방식", `${isAB ? "한울AB" : "한울AA"} · ${size}명`],
+                    ["경기", `총 ${size}경기 (1인당 4경기)`],
+                  ] as const
+                ).map(([k, v]) => (
+                  <div key={k} className="flex items-center justify-between px-4 py-3">
+                    <dt className="text-sm text-muted">{k}</dt>
+                    <dd className="font-medium">{v}</dd>
+                  </div>
+                ))}
+              </dl>
+              <Notice tone="info">
+                <Shuffle className="mt-0.5 size-4 shrink-0" />
+                생성하면 참가자 순번이 {isAB ? "A·B그룹 안에서 각각 " : ""}무작위로 배정되고 대진표가 만들어집니다.
+              </Notice>
+              <p className="px-1 text-sm text-muted">
                 게스트 {entries.filter((e) => !e.memberId && !e.register).length}명은 누적 통계에 포함되지 않습니다.
               </p>
             </div>
           )}
 
-          {error && <p className="mt-3 rounded-lg bg-red-50 p-3 font-bold text-red-700">{error}</p>}
+          {error && (
+            <div className="mt-4">
+              <Notice tone="danger">{error}</Notice>
+            </div>
+          )}
         </div>
 
-        <footer className="grid grid-cols-[auto_1fr] gap-2 border-t-2 border-ink/10 p-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+        <footer className="grid grid-cols-[auto_1fr] gap-2 border-t border-line bg-surface px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
           <Button variant="secondary" onClick={() => (step === 0 ? onClose() : setStep(step - 1))}>
             {step === 0 ? "취소" : "이전"}
           </Button>
@@ -321,7 +362,14 @@ export function GroupWizard({
             </Button>
           ) : (
             <Button disabled={busy} onClick={create}>
-              {busy ? "생성 중…" : "🎲 순번 배정 · 대진표 생성"}
+              {busy ? (
+                "생성 중…"
+              ) : (
+                <>
+                  <Shuffle className="size-4" />
+                  순번 배정 · 대진표 생성
+                </>
+              )}
             </Button>
           )}
         </footer>

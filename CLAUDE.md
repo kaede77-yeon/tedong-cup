@@ -48,6 +48,11 @@
 - **API 설계:** Next.js Route Handlers (`src/app/api/...`)를 사용하며, 쓰기(POST/PATCH/DELETE) 요청은 반드시 관리자 인증 미들웨어/검증을 거친다.
 - **비즈니스 로직 분리:** 순위 계산(`calculateStandings`) 및 한울 대진표 생성(`generateMatches`) 로직은 순수 함수(`src/lib/...`)로 분리하여 테스트 가능하게 작성한다.
 - **모바일 UX:** 모든 핵심 화면(대진표, 순위표, 점수 입력 모달)은 375px~430px 모바일 뷰포트 기준으로 한 손 조작이 편하게 설계한다.
+- **디자인 시스템 (모던 미니멀 · 인디고 #4F46E5 · 라이트/다크 자동):**
+  - 색상은 `src/app/globals.css`의 의미 토큰만 사용한다 (`bg-bg/surface/subtle/raised`, `text-ink/muted/faint`, `border-line/line-strong`, `primary`/`primary-text`/`primary-soft`, `success/danger/warning`, `gold/silver/bronze`). `bg-white`, `text-gray-*` 등 원시 색상 클래스 금지 — 다크모드가 깨진다.
+  - 공통 부품 재사용: `Button`·`Card`·`Notice`·`PageTitle`·`SectionTitle`(`components/ui.tsx`), 하단 시트 `Sheet`, 입력창 `.input`, 칩 `.chip`/`.chip-on`.
+  - 아이콘은 `lucide-react`. 이모지는 메달(🥇🥈🥉)에만 사용. 폰트는 Pretendard(dynamic subset).
+  - 페이지 좌우 여백 `px-4`, 카드 목록 간격 `space-y-3`, 카드 패딩 `p-4`, 터치 영역 최소 44px.
 
 ---
 

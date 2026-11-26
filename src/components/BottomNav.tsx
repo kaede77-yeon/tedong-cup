@@ -1,36 +1,34 @@
 "use client";
 
+import { BarChart3, CalendarDays, Trophy, Zap, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const TABS = [
-  { href: "/", label: "진행중", icon: "🎾", match: (p: string) => p === "/" },
-  { href: "/tournaments", label: "대회기록", icon: "📋", match: (p: string) => p.startsWith("/tournaments") },
-  { href: "/hall-of-fame", label: "명예의전당", icon: "🏆", match: (p: string) => p.startsWith("/hall-of-fame") },
-  { href: "/members", label: "개인통계", icon: "📊", match: (p: string) => p.startsWith("/members") },
+const TABS: { href: string; label: string; icon: LucideIcon; match: (p: string) => boolean }[] = [
+  { href: "/", label: "진행중", icon: Zap, match: (p) => p === "/" },
+  { href: "/tournaments", label: "대회기록", icon: CalendarDays, match: (p) => p.startsWith("/tournaments") },
+  { href: "/hall-of-fame", label: "명예의전당", icon: Trophy, match: (p) => p.startsWith("/hall-of-fame") },
+  { href: "/members", label: "개인통계", icon: BarChart3, match: (p) => p.startsWith("/members") },
 ];
 
 /** 정적 셸에서도 렌더링되는 탭바 (pathname이 없으면 강조 없이 표시) */
 export function NavBar({ pathname }: { pathname: string | null }) {
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-30 mx-auto max-w-[480px] border-t-2 border-ink/10 bg-white pb-[env(safe-area-inset-bottom)]">
+    <nav className="fixed inset-x-0 bottom-0 z-30 mx-auto max-w-[480px] border-t border-line bg-surface/85 pb-[env(safe-area-inset-bottom)] backdrop-blur-md">
       <ul className="grid grid-cols-4">
-        {TABS.map((t) => {
-          const active = pathname !== null && t.match(pathname);
+        {TABS.map(({ href, label, icon: Icon, match }) => {
+          const active = pathname !== null && match(pathname);
           return (
-            <li key={t.href}>
+            <li key={href}>
               <Link
-                href={t.href}
-                className={`flex h-16 flex-col items-center justify-center gap-0.5 text-xs font-bold ${
-                  active ? "text-court" : "text-muted"
+                href={href}
+                className={`flex h-16 flex-col items-center justify-center gap-1 text-[11px] font-medium transition ${
+                  active ? "text-primary-text" : "text-muted hover:text-ink"
                 }`}
                 aria-current={active ? "page" : undefined}
               >
-                <span className="text-xl leading-none" aria-hidden>
-                  {t.icon}
-                </span>
-                {t.label}
-                <span className={`mt-0.5 h-1 w-6 rounded-full ${active ? "bg-court" : "bg-transparent"}`} />
+                <Icon className="size-[22px]" strokeWidth={active ? 2.4 : 1.8} aria-hidden />
+                {label}
               </Link>
             </li>
           );

@@ -1,24 +1,139 @@
 @import "tailwindcss";
 
-/* 야외 시인성: 라이트 고대비 단일 테마 */
-@theme {
-  --color-court: #0f5132; /* 진한 코트 그린 — 주요 액션 */
-  --color-court-light: #e6f2ec;
-  --color-ball: #d9f84a; /* 테니스공 라임 — 하이라이트 */
-  --color-ink: #0b0f14;
-  --color-muted: #4b5563;
-  --font-sans: system-ui, -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
+/*
+ * 디자인 토큰 — 모던 미니멀 / 인디고(#4F46E5) / 라이트·다크 자동 전환
+ * 화면 코드에서는 색상값 대신 아래 의미 토큰(bg-surface, text-muted, border-line …)만 사용한다.
+ */
+:root {
+  color-scheme: light;
+  --bg: #f7f7fb; /* 앱 배경 */
+  --surface: #ffffff; /* 카드·시트 */
+  --subtle: #f2f3f8; /* 은은한 채움 (칩, 통계 타일) */
+  --raised: #ffffff; /* subtle 위에 떠 있는 면 (세그먼트 선택 탭) */
+  --line: rgb(15 23 42 / 0.08); /* 기본 테두리 */
+  --line-strong: rgb(15 23 42 / 0.16); /* 입력창·선택지 테두리 */
+  --ink: #0f172a; /* 본문 */
+  --muted: #64748b; /* 보조 텍스트 */
+  --faint: #a3abbd; /* 비활성·자리표시 */
+
+  --primary: #4f46e5; /* 메인 (채움 배경) */
+  --primary-hover: #4338ca;
+  --primary-fg: #ffffff; /* 메인 위 글자 */
+  --primary-text: #4f46e5; /* 표면 위 메인 컬러 글자 */
+  --primary-soft: #eef2ff; /* 메인 연한 배경 */
+  --highlight: #e0e7ff; /* 선택 선수 강조 */
+
+  --success: #059669;
+  --danger: #dc2626;
+  --danger-soft: #fef2f2;
+  --warning: #92400e;
+  --warning-soft: #fef3c7;
+
+  --gold: #d97706;
+  --gold-soft: #fef3c7;
+  --silver: #64748b;
+  --silver-soft: #f1f5f9;
+  --bronze: #c2410c;
+  --bronze-soft: #ffedd5;
 }
 
-html {
-  -webkit-text-size-adjust: 100%;
-  -webkit-tap-highlight-color: transparent;
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --bg: #0b0d14;
+    --surface: #141724;
+    --subtle: #1c2031;
+    --raised: #2a3048;
+    --line: rgb(255 255 255 / 0.08);
+    --line-strong: rgb(255 255 255 / 0.16);
+    --ink: #e8eaf2;
+    --muted: #9aa3b8;
+    --faint: #5d667c;
+
+    --primary: #6366f1;
+    --primary-hover: #7174f5;
+    --primary-fg: #ffffff;
+    --primary-text: #a5b4fc;
+    --primary-soft: rgb(99 102 241 / 0.16);
+    --highlight: rgb(129 140 248 / 0.24);
+
+    --success: #34d399;
+    --danger: #f87171;
+    --danger-soft: rgb(248 113 113 / 0.12);
+    --warning: #fcd34d;
+    --warning-soft: rgb(251 191 36 / 0.12);
+
+    --gold: #fbbf24;
+    --gold-soft: rgb(251 191 36 / 0.14);
+    --silver: #cbd5e1;
+    --silver-soft: rgb(148 163 184 / 0.14);
+    --bronze: #fb923c;
+    --bronze-soft: rgb(234 88 12 / 0.16);
+  }
 }
 
-body {
-  background: #f3f4f6;
-  color: var(--color-ink);
-  font-family: var(--font-sans);
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-subtle: var(--subtle);
+  --color-raised: var(--raised);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-fg: var(--primary-fg);
+  --color-primary-text: var(--primary-text);
+  --color-primary-soft: var(--primary-soft);
+  --color-highlight: var(--highlight);
+  --color-success: var(--success);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-silver: var(--silver);
+  --color-silver-soft: var(--silver-soft);
+  --color-bronze: var(--bronze);
+  --color-bronze-soft: var(--bronze-soft);
+
+  --font-sans:
+    "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, "Apple SD Gothic Neo",
+    "Malgun Gothic", "Noto Sans KR", sans-serif;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    letter-spacing: -0.01em;
+  }
+  :focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  /* 텍스트 입력 공통 */
+  .input {
+    @apply h-12 w-full rounded-xl border border-line-strong bg-surface px-3.5 text-base text-ink shadow-xs transition outline-none placeholder:text-faint focus:border-primary focus:ring-4 focus:ring-primary/15;
+  }
+  /* 칩(선택 토글) 공통 */
+  .chip {
+    @apply inline-flex min-h-11 items-center gap-1 rounded-full border border-line-strong bg-surface px-3.5 text-sm font-medium text-ink shadow-xs transition active:scale-[0.98] disabled:opacity-40;
+  }
+  .chip-on {
+    @apply border-primary bg-primary text-primary-fg;
+  }
 }
 
 /* 숫자 정렬 */

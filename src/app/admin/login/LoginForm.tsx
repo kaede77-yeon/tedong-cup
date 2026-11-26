@@ -29,19 +29,19 @@ export function LoginForm() {
   }
 
   return (
-    <form onSubmit={submit} className="space-y-3 px-4">
+    <form onSubmit={submit} className="mx-4 space-y-4 rounded-2xl border border-line bg-surface p-5 shadow-xs">
       <label className="block">
-        <span className="text-sm font-bold">비밀번호</span>
+        <span className="text-sm font-medium text-muted">비밀번호</span>
         <input
           type="password"
           autoComplete="current-password"
           autoFocus
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="mt-1 block h-14 w-full rounded-xl border-2 border-ink/20 px-4 text-lg focus:border-court focus:outline-none"
+          className="input mt-1.5 h-14 text-lg"
         />
       </label>
-      {error && <p className="font-bold text-red-700">{error}</p>}
+      {error && <p className="text-sm font-medium text-danger">{error}</p>}
       <Button type="submit" disabled={!password || busy} className="w-full">
         {busy ? "확인 중…" : "로그인"}
       </Button>

@@ -2,7 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Button } from "@/components/ui";
+import { Plus } from "lucide-react";
+import { Button, Card } from "@/components/ui";
 import { api } from "@/lib/client";
 import type { Tournament } from "@/lib/types";
 
@@ -32,7 +33,7 @@ export function NewTournamentForm() {
           setOpen(true);
         }}
       >
-        ＋ 새 월례대회 만들기
+        <Plus className="size-5" />새 월례대회 만들기
       </Button>
     );
   }
@@ -51,35 +52,38 @@ export function NewTournamentForm() {
   }
 
   return (
-    <form onSubmit={submit} className="space-y-3 rounded-2xl border-2 border-court p-4">
-      <label className="block">
-        <span className="text-sm font-bold">대회 일자</span>
-        <input
-          type="date"
-          required
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-          className="mt-1 block h-12 w-full rounded-xl border-2 border-ink/20 px-3 text-base"
-        />
-      </label>
-      <label className="block">
-        <span className="text-sm font-bold">대회명 (비우면 자동)</span>
-        <input
-          value={title}
-          placeholder={placeholder}
-          onChange={(e) => setTitle(e.target.value)}
-          className="mt-1 block h-12 w-full rounded-xl border-2 border-ink/20 px-3 text-base"
-        />
-      </label>
-      {error && <p className="font-bold text-red-700">{error}</p>}
-      <div className="grid grid-cols-[auto_1fr] gap-2">
-        <Button variant="secondary" onClick={() => setOpen(false)}>
-          취소
-        </Button>
-        <Button type="submit" disabled={busy || !date}>
-          {busy ? "생성 중…" : "대회 생성"}
-        </Button>
-      </div>
-    </form>
+    <Card className="p-4">
+      <form onSubmit={submit} className="space-y-4">
+        <p className="text-base font-semibold">새 월례대회</p>
+        <label className="block">
+          <span className="text-sm font-medium text-muted">대회 일자</span>
+          <input
+            type="date"
+            required
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            className="input mt-1.5"
+          />
+        </label>
+        <label className="block">
+          <span className="text-sm font-medium text-muted">대회명 (비우면 자동)</span>
+          <input
+            value={title}
+            placeholder={placeholder}
+            onChange={(e) => setTitle(e.target.value)}
+            className="input mt-1.5"
+          />
+        </label>
+        {error && <p className="text-sm font-medium text-danger">{error}</p>}
+        <div className="grid grid-cols-[auto_1fr] gap-2">
+          <Button variant="secondary" onClick={() => setOpen(false)}>
+            취소
+          </Button>
+          <Button type="submit" disabled={busy || !date}>
+            {busy ? "생성 중…" : "대회 생성"}
+          </Button>
+        </div>
+      </form>
+    </Card>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { X } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import useSWR from "swr";
@@ -38,26 +39,27 @@ export function TournamentView({ initial, admin = false, groupActions, showHeade
 
   const group = groups[Math.min(groupIdx, groups.length - 1)];
   const editable = admin && tournament.status === "IN_PROGRESS";
+  const progress = group ? Math.round((group.playedCount / group.matches.length) * 100) : 0;
 
   return (
     <div>
       {showHeader && (
-        <div className="px-4 pt-5 pb-3">
+        <div className="px-4 pt-6 pb-4">
           <div className="flex items-center gap-2">
             <StatusBadge status={tournament.status} />
-            <span className="text-sm font-semibold text-muted">{formatDate(tournament.date)}</span>
+            <span className="text-sm text-muted">{formatDate(tournament.date)}</span>
           </div>
-          <h1 className="mt-1 text-2xl font-extrabold tracking-tight">{tournament.title}</h1>
+          <h1 className="mt-2 text-2xl font-bold tracking-tight">{tournament.title}</h1>
         </div>
       )}
 
       {groups.length === 0 ? (
-        <p className="px-4 py-12 text-center font-medium text-muted">아직 생성된 그룹이 없습니다.</p>
+        <p className="px-4 py-20 text-center text-sm text-muted">아직 생성된 그룹이 없습니다.</p>
       ) : (
         <>
-          {/* 그룹 탭 */}
+          {/* 그룹 선택 */}
           {groups.length > 1 && (
-            <div className="flex gap-2 overflow-x-auto px-4 pb-2" role="tablist" aria-label="그룹">
+            <div className="flex gap-2 overflow-x-auto px-4 pb-3" role="tablist" aria-label="그룹">
               {groups.map((g, i) => (
                 <button
                   key={g.id}
@@ -67,9 +69,7 @@ export function TournamentView({ initial, admin = false, groupActions, showHeade
                     setGroupIdx(i);
                     setFocus(null);
                   }}
-                  className={`min-h-11 shrink-0 rounded-full border-2 px-4 text-base font-bold ${
-                    i === groupIdx ? "border-court bg-court text-white" : "border-ink/15 bg-white text-ink"
-                  }`}
+                  className={`chip shrink-0 ${i === groupIdx ? "chip-on" : ""}`}
                 >
                   {g.name}
                 </button>
@@ -77,17 +77,20 @@ export function TournamentView({ initial, admin = false, groupActions, showHeade
             </div>
           )}
 
-          <div className="sticky top-14 z-20 border-b-2 border-ink/10 bg-white px-4 pt-1">
-            <div className="flex items-baseline justify-between">
-              <p className="text-sm font-semibold text-muted">
+          <div className="sticky top-14 z-20 border-b border-line bg-bg/85 px-4 pt-1 pb-3 backdrop-blur-md">
+            <div className="flex items-center justify-between text-xs text-muted">
+              <span>
                 {group.name} · {group.method === "HANUL_AA" ? "한울AA" : "한울AB"} {group.size}명
-              </p>
-              <p className="tabular text-sm font-bold text-court">
-                {group.playedCount}/{group.matches.length} 경기 완료
-              </p>
+              </span>
+              <span className="tabular font-medium text-ink">
+                {group.playedCount}/{group.matches.length} 경기
+              </span>
             </div>
-            {/* 대진표/순위표 탭 */}
-            <div className="mt-2 grid grid-cols-2" role="tablist">
+            <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-subtle" aria-hidden>
+              <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${progress}%` }} />
+            </div>
+            {/* 대진표/순위표 세그먼트 */}
+            <div className="mt-3 grid grid-cols-2 rounded-xl bg-subtle p-1" role="tablist">
               {(
                 [
                   ["matches", "대진표"],
@@ -99,8 +102,8 @@ export function TournamentView({ initial, admin = false, groupActions, showHeade
                   role="tab"
                   aria-selected={tab === k}
                   onClick={() => setTab(k)}
-                  className={`h-12 border-b-4 text-lg font-extrabold ${
-                    tab === k ? "border-court text-ink" : "border-transparent text-muted"
+                  className={`h-10 rounded-lg text-sm font-semibold transition ${
+                    tab === k ? "bg-raised text-ink shadow-sm" : "text-muted hover:text-ink"
                   }`}
                 >
                   {label}
@@ -124,7 +127,7 @@ export function TournamentView({ initial, admin = false, groupActions, showHeade
             />
           )}
 
-          {groupActions && <div className="px-4 pt-4">{groupActions(group, () => mutate())}</div>}
+          {groupActions && <div className="px-4 pt-2">{groupActions(group, () => mutate())}</div>}
         </>
       )}
 
@@ -151,12 +154,17 @@ function FocusBar({ group, code, onClear }: { group: GroupView; code: string; on
   const name = useNames(group).get(code);
   const mine = group.matches.filter((m) => [...m.teamA, ...m.teamB].includes(code)).map((m) => m.order);
   return (
-    <div className="flex items-center justify-between gap-2 bg-ball px-4 py-2">
-      <p className="text-sm font-bold">
-        <span className="text-base font-extrabold">{name}</span> 경기: {mine.map((o) => `${o}번`).join(", ")}
+    <div className="mx-4 mt-3 flex items-center justify-between gap-2 rounded-xl bg-highlight px-3.5 py-2">
+      <p className="text-sm">
+        <span className="font-semibold">{name}</span>
+        <span className="text-muted"> · {mine.map((o) => `${o}번`).join(", ")} 경기</span>
       </p>
-      <button onClick={onClear} className="min-h-11 rounded-lg bg-ink px-3 text-sm font-bold text-white">
-        해제
+      <button
+        onClick={onClear}
+        className="grid size-9 place-items-center rounded-lg text-muted transition hover:bg-surface hover:text-ink"
+        aria-label="강조 해제"
+      >
+        <X className="size-4" />
       </button>
     </div>
   );
@@ -178,16 +186,17 @@ function MatchList({
   const next = group.matches.find((m) => m.scoreA === null)?.order;
 
   return (
-    <ol className="space-y-2 px-3 py-3">
+    <ol className="space-y-3 px-4 py-4">
       {group.matches.map((m) => {
         const involved = focus !== null && [...m.teamA, ...m.teamB].includes(focus);
         const dim = focus !== null && !involved;
         const played = m.scoreA !== null && m.scoreB !== null;
         const aWin = played && m.scoreA! > m.scoreB!;
         const bWin = played && m.scoreB! > m.scoreA!;
+        const isNext = m.order === next && !played;
 
         const team = (codes: [string, string], win: boolean, align: "left" | "right") => (
-          <div className={`flex min-w-0 flex-1 flex-col gap-1 ${align === "right" ? "items-end text-right" : ""}`}>
+          <div className={`flex min-w-0 flex-1 flex-col gap-0.5 ${align === "right" ? "items-end text-right" : "items-start"}`}>
             {codes.map((c) => (
               <button
                 key={c}
@@ -195,9 +204,9 @@ function MatchList({
                   e.stopPropagation();
                   onFocus(c);
                 }}
-                className={`max-w-full truncate rounded-md px-1.5 py-0.5 text-[17px] leading-tight ${
-                  win ? "font-extrabold" : played ? "font-medium text-muted" : "font-bold"
-                } ${focus === c ? "bg-ball text-ink" : ""}`}
+                className={`max-w-full truncate rounded-md px-1.5 py-0.5 text-[16px] leading-snug transition ${
+                  win ? "font-semibold text-ink" : played ? "text-muted" : "font-medium text-ink"
+                } ${focus === c ? "bg-highlight" : "hover:bg-subtle"}`}
               >
                 {names.get(c)}
               </button>
@@ -208,22 +217,24 @@ function MatchList({
         const body = (
           <>
             <div className="flex items-center justify-between">
-              <span className="text-xs font-extrabold text-muted">게임 {m.order}</span>
-              {m.order === next && !played && (
-                <span className="rounded bg-court px-1.5 text-[11px] font-extrabold text-white">다음 경기</span>
+              <span className="text-xs font-medium text-muted">게임 {m.order}</span>
+              {isNext && (
+                <span className="rounded-full bg-primary-soft px-2 py-0.5 text-[11px] font-semibold text-primary-text">
+                  다음 경기
+                </span>
               )}
             </div>
-            <div className="mt-1 flex items-center gap-2">
+            <div className="mt-2 flex items-center gap-2">
               {team(m.teamA, aWin, "left")}
-              <div className="tabular flex w-[88px] shrink-0 items-center justify-center gap-1 text-3xl font-black">
+              <div className="tabular flex w-[84px] shrink-0 items-center justify-center gap-1.5 text-[28px] leading-none font-bold">
                 {played ? (
                   <>
-                    <span className={aWin ? "text-court" : "text-gray-400"}>{m.scoreA}</span>
-                    <span className="text-xl text-gray-300">:</span>
-                    <span className={bWin ? "text-court" : "text-gray-400"}>{m.scoreB}</span>
+                    <span className={aWin ? "text-primary-text" : "text-faint"}>{m.scoreA}</span>
+                    <span className="text-base text-faint">:</span>
+                    <span className={bWin ? "text-primary-text" : "text-faint"}>{m.scoreB}</span>
                   </>
                 ) : (
-                  <span className="text-lg font-bold text-gray-300">vs</span>
+                  <span className="text-sm font-medium text-faint">vs</span>
                 )}
               </div>
               {team(m.teamB, bWin, "right")}
@@ -231,9 +242,9 @@ function MatchList({
           </>
         );
 
-        const cls = `block w-full rounded-2xl border-2 p-3 text-left transition-opacity ${
-          involved ? "border-ink bg-ball/30" : m.order === next ? "border-court" : "border-ink/10"
-        } ${dim ? "opacity-35" : ""}`;
+        const cls = `block w-full rounded-2xl border bg-surface p-4 text-left shadow-xs transition ${
+          involved ? "border-primary ring-4 ring-primary/10" : isNext ? "border-primary/40" : "border-line"
+        } ${dim ? "opacity-40" : ""}`;
 
         return (
           <li key={m.order}>
@@ -243,7 +254,7 @@ function MatchList({
                 tabIndex={0}
                 onClick={() => onEdit(m)}
                 onKeyDown={(e) => e.key === "Enter" && onEdit(m)}
-                className={`${cls} cursor-pointer active:bg-gray-50`}
+                className={`${cls} cursor-pointer hover:border-line-strong active:scale-[0.99]`}
                 aria-label={`게임 ${m.order} 점수 입력`}
               >
                 {body}
@@ -280,70 +291,76 @@ function StandingsTable({
   const tables = group.standings;
 
   return (
-    <div className="px-2 py-3">
+    <div className="space-y-5 px-4 py-4">
       {tables.map(({ side, rows }) => (
-        <section key={side ?? "all"} className={side === "B" ? "mt-6" : ""}>
+        <section key={side ?? "all"}>
           {side && (
-            <h3 className="flex items-baseline justify-between px-2 pb-1">
-              <span className="text-lg font-extrabold">{side}그룹 순위</span>
-              <span className="text-xs font-semibold text-muted">{rows.length}명 · 조 안에서 순위 비교</span>
-            </h3>
+            <div className="flex items-baseline justify-between px-1 pb-2">
+              <h3 className="text-base font-semibold">{side}그룹 순위</h3>
+              <span className="text-xs text-muted">{rows.length}명 · 조 안에서 순위 비교</span>
+            </div>
           )}
-          <table className="tabular w-full border-collapse text-center text-[15px]">
-            <thead>
-              <tr className="border-b-2 border-ink text-xs font-extrabold text-muted">
-                <th className="w-11 py-2">순위</th>
-                <th className="py-2 text-left">이름</th>
-                <th className="w-8">경기</th>
-                <th className="w-8">승</th>
-                <th className="w-8">패</th>
-                <th className="w-8">득</th>
-                <th className="w-8">실</th>
-                <th className="w-10">득실</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((r) => (
-                <tr
-                  key={r.code}
-                  className={`border-b border-ink/10 ${focus === r.code ? "bg-ball" : r.rank <= 2 && r.played > 0 ? "bg-court-light" : ""}`}
-                >
-                  <td className="py-3 font-black">
-                    <span className={r.tied ? "text-xs" : "text-lg"}>{rankLabel(r.rank, r.tied)}</span>
-                  </td>
-                  <td className="max-w-0 py-1 text-left">
-                    <button
-                      onClick={() => onFocus(r.code)}
-                      className="block w-full truncate text-left text-base font-bold"
-                    >
-                      {medal(r.code)}
-                      {r.displayName}
-                    </button>
-                  </td>
-                  <td>{r.played}</td>
-                  <td className="font-extrabold">{r.wins}</td>
-                  <td>{r.losses}</td>
-                  <td>{r.pointsFor}</td>
-                  <td>{r.pointsAgainst}</td>
-                  <td className={`font-bold ${r.diff > 0 ? "text-court" : r.diff < 0 ? "text-red-700" : ""}`}>
-                    {r.diff > 0 ? `+${r.diff}` : r.diff}
-                  </td>
+          <div className="overflow-hidden rounded-2xl border border-line bg-surface shadow-xs">
+            <table className="tabular w-full border-collapse text-center text-[14px]">
+              <thead>
+                <tr className="border-b border-line bg-subtle/60 text-[11px] font-medium text-muted">
+                  <th className="w-12 py-2.5">순위</th>
+                  <th className="py-2.5 text-left">이름</th>
+                  <th className="w-8">경기</th>
+                  <th className="w-8">승</th>
+                  <th className="w-8">패</th>
+                  <th className="w-8">득</th>
+                  <th className="w-8">실</th>
+                  <th className="w-11 pr-2">득실</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-line">
+                {rows.map((r) => {
+                  const top = r.rank <= 2 && r.played > 0;
+                  return (
+                    <tr key={r.code} className={focus === r.code ? "bg-highlight" : top ? "bg-primary-soft/60" : ""}>
+                      <td className="py-3">
+                        <span
+                          className={`inline-grid min-w-7 place-items-center rounded-md px-1 font-semibold ${
+                            r.tied ? "text-[11px]" : "text-[15px]"
+                          } ${top ? "text-primary-text" : "text-ink"}`}
+                        >
+                          {rankLabel(r.rank, r.tied)}
+                        </span>
+                      </td>
+                      <td className="max-w-0 text-left">
+                        <button onClick={() => onFocus(r.code)} className="block w-full truncate py-1 text-left text-[15px] font-medium">
+                          {medal(r.code) && <span className="mr-1">{medal(r.code)}</span>}
+                          {r.displayName}
+                        </button>
+                      </td>
+                      <td className="text-muted">{r.played}</td>
+                      <td className="font-semibold">{r.wins}</td>
+                      <td className="text-muted">{r.losses}</td>
+                      <td className="text-muted">{r.pointsFor}</td>
+                      <td className="text-muted">{r.pointsAgainst}</td>
+                      <td className={`pr-2 font-semibold ${r.diff > 0 ? "text-success" : r.diff < 0 ? "text-danger" : "text-muted"}`}>
+                        {r.diff > 0 ? `+${r.diff}` : r.diff}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </section>
       ))}
-      <p className="mt-3 px-2 text-xs font-medium text-muted">
-        순위 기준: 승수 → 득실차 → 다득점. 모두 같으면 공동 순위. 이름을 누르면 해당 선수의 경기를 표시합니다.
-      </p>
-      {group.participants.some((p) => p.memberId) && (
-        <p className="mt-1 px-2 text-xs font-medium text-muted">
-          <Link href="/members" className="underline">
-            개인 누적 통계 보기
-          </Link>
-        </p>
-      )}
+      <div className="space-y-1 px-1 text-xs text-muted">
+        <p>순위 기준: 승수 → 득실차 → 다득점, 모두 같으면 공동 순위</p>
+        <p>이름을 누르면 해당 선수의 경기를 표시합니다.</p>
+        {group.participants.some((p) => p.memberId) && (
+          <p>
+            <Link href="/members" className="font-medium text-primary-text underline-offset-4 hover:underline">
+              개인 누적 통계 보기 →
+            </Link>
+          </p>
+        )}
+      </div>
     </div>
   );
 }

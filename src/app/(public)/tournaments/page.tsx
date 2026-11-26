@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { Suspense } from "react";
-import { Card, Empty, formatDate, Loading, PageTitle, StatusBadge } from "@/components/ui";
+import { TournamentCard } from "@/components/TournamentCard";
+import { Empty, Loading, PageTitle } from "@/components/ui";
 import { YearFilter } from "@/components/YearFilter";
 import { load } from "@/server/page";
 import { listTournaments, listYears } from "@/server/repo";
@@ -28,21 +28,10 @@ async function Archive({ searchParams }: Pick<PageProps<"/tournaments">, "search
       {list.length === 0 ? (
         <Empty>대회 기록이 없습니다.</Empty>
       ) : (
-        <ul className="space-y-2 px-3">
+        <ul className="space-y-3 px-4">
           {list.map((t) => (
             <li key={t.id}>
-              <Link href={`/tournaments/${t.id}`} className="block active:opacity-70">
-                <Card className="p-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-semibold text-muted">{formatDate(t.date)}</span>
-                    <StatusBadge status={t.status} />
-                  </div>
-                  <p className="mt-1 text-lg font-extrabold">{t.title}</p>
-                  <p className="mt-1 text-sm font-medium text-muted">
-                    {t.groups.length === 0 ? "그룹 없음" : t.groups.map((g) => `${g.name} ${g.size}명`).join(" · ")}
-                  </p>
-                </Card>
-              </Link>
+              <TournamentCard t={t} href={`/tournaments/${t.id}`} />
             </li>
           ))}
         </ul>
