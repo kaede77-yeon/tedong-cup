@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, ListOrdered } from "lucide-react";
 import { Sheet } from "@/components/Sheet";
 import { Button, Notice } from "@/components/ui";
+import { awardsFromStandings, type AwardPlace } from "@/lib/awardsFromStandings";
 import { api } from "@/lib/client";
 import type { TournamentDetail } from "@/server/repo";
 
-type Place = "winners" | "runnersUp" | "third";
+type Place = AwardPlace;
 type AwardPick = Record<Place, string[]>;
 
 const PLACES: { key: Place; icon: string; label: string; required: boolean }[] = [
@@ -20,7 +21,8 @@ const empty = (): AwardPick => ({ winners: [], runnersUp: [], third: [] });
 
 /**
  * 대회 종료: 그룹별 우승 2명·준우승 2명(필수), 3위 2명(선택) 확정.
- * 리그 순위와 별도로 결정전(토너먼트)을 거쳐 수상자가 정해지므로 자동 입력하지 않는다.
+ * 기본은 관리자가 직접 선택(결정전 결과 입력). 원하면 "순위표대로 채우기"로 리그 순위 기준 후보를 채운 뒤
+ * 확인·수정해서 확정할 수 있다 (자동 확정은 하지 않음).
  * (잠금 해제 후 재종료 시에는 이전에 확정했던 수상자를 불러온다)
  */
 export function CompleteDialog({
@@ -40,6 +42,8 @@ export function CompleteDialog({
       ]),
     ),
   );
+  /** 순위표대로 채웠을 때 공동 순위 때문에 정하지 못한 자리 (그룹별) */
+  const [unresolved, setUnresolved] = useState<Record<string, Place[]> | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -68,6 +72,19 @@ export function CompleteDialog({
       }
       return { ...prev, [groupId]: next };
     });
+  }
+
+  /** 모든 그룹을 리그 순위표 기준으로 채운다 (정할 수 없는 자리는 비움) */
+  function fillFromStandings() {
+    const next: Record<string, AwardPick> = {};
+    const notes: Record<string, Place[]> = {};
+    for (const g of detail.groups) {
+      const r = awardsFromStandings(g.standings);
+      next[g.id] = r.picks;
+      notes[g.id] = r.unresolved;
+    }
+    setPicks(next);
+    setUnresolved(notes);
   }
 
   async function submit() {
@@ -124,8 +141,20 @@ export function CompleteDialog({
         </Notice>
       )}
 
+      <Button variant="secondary" className="mt-3 w-full first:mt-0" onClick={fillFromStandings} disabled={busy}>
+        <ListOrdered className="size-5" />
+        순위표대로 채우기
+      </Button>
+      <p className="mt-1.5 px-1 text-xs text-muted">
+        {detail.groups.some((g) => g.method === "HANUL_AB")
+          ? "AA: 1·2위 우승, 3·4위 준우승, 5·6위 3위 / AB: 각 조 같은 순위끼리 한 팀. "
+          : "1·2위 우승, 3·4위 준우승, 5·6위 3위. "}
+        채운 뒤에도 이름을 눌러 바꿀 수 있습니다.
+      </p>
+
       {detail.groups.map((g) => {
         const p = picks[g.id];
+        const missing = unresolved?.[g.id] ?? [];
         const people = [...g.participants].sort((a, b) => a.displayName.localeCompare(b.displayName, "ko"));
         return (
           <section key={g.id} className="mt-5 first:mt-2">
@@ -157,6 +186,12 @@ export function CompleteDialog({
                 );
               })}
             </ul>
+            {missing.length > 0 && (
+              <p className="mt-2 text-sm text-warning">
+                공동 순위 등으로 {missing.map((m) => PLACES.find((pl) => pl.key === m)!.label).join("·")} 자리는 순위표로 정할 수
+                없어 비워 두었습니다. 직접 선택해 주세요{missing.length === 1 && missing[0] === "third" ? " (3위는 비워 둬도 됩니다)" : ""}.
+              </p>
+            )}
             {p.third.length === 1 && <p className="mt-2 text-sm text-danger">3위는 2명을 선택하거나 비워 두세요.</p>}
           </section>
         );
