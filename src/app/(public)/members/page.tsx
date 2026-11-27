@@ -24,16 +24,16 @@ async function Ranking() {
   return (
     <div className="px-4">
       <div className="overflow-hidden rounded-2xl border border-line bg-surface shadow-xs">
-        <table className="tabular w-full border-collapse text-center text-[14px]">
+        <table className="tabular w-full border-collapse text-center text-[16px]">
           <thead>
-            <tr className="border-b border-line bg-subtle/60 text-[11px] font-medium text-muted">
+            <tr className="border-b border-line bg-subtle/60 text-[13px] font-medium text-muted">
               <th className="w-9 py-2.5">#</th>
               <th className="py-2.5 text-left">이름</th>
               <th className="w-9">대회</th>
               <th className="w-12">승-패</th>
               <th className="w-14">승률</th>
               <th className="w-10">득실</th>
-              <th className="w-14 pr-2">🥇🥈🥉</th>
+              <th className="w-14 pr-2 text-[11px] whitespace-nowrap">🥇🥈🥉</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-line">
@@ -43,7 +43,7 @@ async function Ranking() {
                 <td className="max-w-0 text-left">
                   <Link
                     href={`/members/${r.memberId}`}
-                    className="block truncate py-1 text-[15px] font-medium underline-offset-4 hover:text-primary-text hover:underline"
+                    className="block truncate py-1 text-[17px] font-medium underline-offset-4 hover:text-primary-text hover:underline"
                   >
                     {r.label}
                   </Link>

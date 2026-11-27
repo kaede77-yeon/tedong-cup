@@ -24,7 +24,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full antialiased">
         <div className="mx-auto flex min-h-dvh max-w-[480px] flex-col">
           <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-line bg-bg/80 px-4 backdrop-blur-md">
-            <Link href="/" className="flex items-center gap-2 text-[17px] font-bold tracking-tight">
+            <Link href="/" className="flex items-center gap-2 text-[20px] font-bold tracking-tight">
               <LogoIcon />
               테동회 대회관리
             </Link>

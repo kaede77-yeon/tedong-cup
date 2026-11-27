@@ -320,7 +320,7 @@ export function GroupWizard({
 
           {step === 4 && size && (
             <div className="space-y-3">
-              <dl className="divide-y divide-line rounded-2xl border border-line bg-surface text-[15px] shadow-xs">
+              <dl className="divide-y divide-line rounded-2xl border border-line bg-surface text-[17px] shadow-xs">
                 {(
                   [
                     ["그룹", name],

@@ -59,7 +59,7 @@ async function Detail({ params }: Pick<PageProps<"/members/[id]">, "params">) {
                   <Card className="flex items-center justify-between gap-3 p-4 transition group-hover:border-line-strong">
                     <div className="min-w-0">
                       <p className="text-xs text-muted">{formatDate(h.date)}</p>
-                      <p className="mt-0.5 truncate text-[15px] font-semibold">
+                      <p className="mt-0.5 truncate text-[17px] font-semibold">
                         {h.title} · {h.groupName}
                         {h.side && ` ${h.side}그룹`}
                       </p>

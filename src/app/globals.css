@@ -103,6 +103,16 @@
   --font-sans:
     "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, "Apple SD Gothic Neo",
     "Malgun Gothic", "Noto Sans KR", sans-serif;
+
+  /* 야외 시인성을 위해 글자 크기를 Tailwind 기본값보다 15% 키운다 (여백·높이는 유지).
+     줄 높이는 Tailwind 기본 비율(--text-*--line-height)을 그대로 따른다. */
+  --text-xs: 0.8625rem; /* 13.8px */
+  --text-sm: 1.0063rem; /* 16.1px */
+  --text-base: 1.15rem; /* 18.4px */
+  --text-lg: 1.2938rem; /* 20.7px */
+  --text-xl: 1.4375rem; /* 23px */
+  --text-2xl: 1.725rem; /* 27.6px */
+  --text-3xl: 2.1563rem; /* 34.5px */
 }
 
 @layer base {
@@ -114,6 +124,7 @@
     background: var(--bg);
     color: var(--ink);
     font-family: var(--font-sans);
+    font-size: 1.15rem; /* = --text-base (@theme inline은 CSS 변수를 만들지 않음) */
     letter-spacing: -0.01em;
   }
   :focus-visible {

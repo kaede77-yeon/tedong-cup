@@ -56,7 +56,7 @@ export function StepLabel({ n, children }: { n?: number; children: ReactNode }) 
   return (
     <p className="mb-2 flex items-center gap-2 text-sm font-medium text-muted">
       {n !== undefined && (
-        <span className="grid size-5 place-items-center rounded-full bg-primary-soft text-[11px] font-semibold text-primary-text">
+        <span className="grid size-5 place-items-center rounded-full bg-primary-soft text-[13px] font-semibold text-primary-text">
           {n}
         </span>
       )}

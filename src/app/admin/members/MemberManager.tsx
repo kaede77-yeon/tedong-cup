@@ -121,7 +121,7 @@ export function MemberManager({ initial }: { initial: Member[] }) {
         {visible.map((m) => (
           <li key={m.id} className={`flex items-center gap-1 py-1.5 pr-2 pl-4 ${m.isActive ? "" : "opacity-50"}`}>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-[15px] font-medium">
+              <p className="truncate text-[17px] font-medium">
                 {m.name}
                 {m.nickname && <span className="ml-1.5 text-sm text-muted">{m.nickname}</span>}
               </p>

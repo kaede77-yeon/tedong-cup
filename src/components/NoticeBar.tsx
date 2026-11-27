@@ -31,7 +31,7 @@ export function NoticeBar({ notices }: { notices: NoticeItem[] }) {
         id="notice-bar"
         type="button"
         onClick={() => setIndex(0)}
-        className="flex h-8 w-full items-center gap-2 border-b border-line bg-primary-soft px-4 text-left text-primary-text transition active:bg-primary-soft/70"
+        className="flex h-10 w-full items-center gap-2 border-b border-line bg-primary-soft px-4 text-left text-primary-text transition active:bg-primary-soft/70"
         aria-label={`공지사항: ${latest.title} (눌러서 전체 보기)`}
       >
         <Megaphone className="size-4 shrink-0" aria-hidden />
@@ -76,7 +76,7 @@ export function NoticeBar({ notices }: { notices: NoticeItem[] }) {
         >
           <div>
             {current.content ? (
-              <p className="text-[15px] leading-relaxed break-words whitespace-pre-wrap text-ink">{current.content}</p>
+              <p className="text-[17px] leading-relaxed break-words whitespace-pre-wrap text-ink">{current.content}</p>
             ) : (
               <p className="text-sm text-muted">추가 내용이 없습니다.</p>
             )}

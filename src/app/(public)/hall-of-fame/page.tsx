@@ -41,7 +41,7 @@ function Names({ people }: { people: Laureate[] }) {
 
 function Row({ icon, label, people }: { icon: string; label: string; people: Laureate[] }) {
   return (
-    <p className="flex items-center gap-2 text-[15px]">
+    <p className="flex items-center gap-2 text-[17px]">
       <span className="w-5 shrink-0 text-center" aria-hidden>
         {icon}
       </span>

@@ -204,7 +204,7 @@ function MatchList({
                   e.stopPropagation();
                   onFocus(c);
                 }}
-                className={`max-w-full truncate rounded-md px-1.5 text-[16px] leading-tight transition ${
+                className={`max-w-full truncate rounded-md px-1.5 text-[18px] leading-tight transition ${
                   win ? "font-semibold text-ink" : played ? "text-muted" : "font-medium text-ink"
                 } ${focus === c ? "bg-highlight" : "hover:bg-subtle"}`}
               >
@@ -221,14 +221,14 @@ function MatchList({
                 게임 {m.order}
               </span>
               {isNext && (
-                <span className="rounded-full bg-primary px-2 text-[11px] leading-[18px] font-semibold text-primary-fg">
+                <span className="rounded-full bg-primary px-2 text-[13px] leading-[18px] font-semibold text-primary-fg">
                   다음 경기
                 </span>
               )}
             </div>
             <div className="mt-1 flex items-center gap-2">
               {team(m.teamA, aWin, "left")}
-              <div className="tabular flex w-[84px] shrink-0 items-center justify-center gap-1.5 text-[28px] leading-none font-bold">
+              <div className="tabular flex w-[84px] shrink-0 items-center justify-center gap-1.5 text-[32px] leading-none font-bold">
                 {played ? (
                   <>
                     <span className={aWin ? "text-primary-text" : "text-faint"}>{m.scoreA}</span>
@@ -303,9 +303,9 @@ function StandingsTable({
             </div>
           )}
           <div className="overflow-hidden rounded-2xl border border-line bg-surface shadow-xs">
-            <table className="tabular w-full border-collapse text-center text-[14px]">
+            <table className="tabular w-full border-collapse text-center text-[16px]">
               <thead>
-                <tr className="border-b border-line bg-subtle/60 text-[11px] font-medium text-muted">
+                <tr className="border-b border-line bg-subtle/60 text-[13px] font-medium text-muted">
                   <th className="w-12 py-2.5">순위</th>
                   <th className="py-2.5 text-left">이름</th>
                   <th className="w-8">경기</th>
@@ -324,14 +324,14 @@ function StandingsTable({
                       <td className="py-3">
                         <span
                           className={`inline-grid min-w-7 place-items-center rounded-md px-1 font-semibold ${
-                            r.tied ? "text-[11px]" : "text-[15px]"
+                            r.tied ? "text-[13px]" : "text-[17px]"
                           } ${top ? "text-primary-text" : "text-ink"}`}
                         >
                           {rankLabel(r.rank, r.tied)}
                         </span>
                       </td>
                       <td className="max-w-0 text-left">
-                        <button onClick={() => onFocus(r.code)} className="flex w-full items-center py-1 text-left text-[15px] font-medium">
+                        <button onClick={() => onFocus(r.code)} className="flex w-full items-center py-1 text-left text-[17px] font-medium">
                           {/* 이름이 길어 잘려도 메달은 항상 보이도록 이름만 truncate */}
                           <span className="truncate">{r.displayName}</span>
                           {medal(r.code) && <span className="ml-1 shrink-0">{medal(r.code)}</span>}

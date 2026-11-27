@@ -3,11 +3,11 @@ import mainImage from "../../public/main.webp";
 
 /**
  * 상단 헤더(h-14)와 하단 탭바(h-16) 사이 영역을 대표 이미지로 채운다.
- * 한줄 공지(#notice-bar, h-8)가 있으면 그 아래부터 시작한다.
+ * 한줄 공지(#notice-bar, h-10)가 있으면 그 아래부터 시작한다.
  */
 export function NoTournament() {
   return (
-    <section className="fixed inset-x-0 top-14 [body:has(#notice-bar)_&]:top-[5.5rem] bottom-[calc(4rem+env(safe-area-inset-bottom))] mx-auto max-w-[480px] overflow-hidden">
+    <section className="fixed inset-x-0 top-14 [body:has(#notice-bar)_&]:top-[6rem] bottom-[calc(4rem+env(safe-area-inset-bottom))] mx-auto max-w-[480px] overflow-hidden">
       <Image
         src={mainImage}
         alt="테동회 테니스 토너먼트"

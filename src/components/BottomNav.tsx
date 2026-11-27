@@ -22,7 +22,7 @@ export function NavBar({ pathname }: { pathname: string | null }) {
             <li key={href}>
               <Link
                 href={href}
-                className={`flex h-16 flex-col items-center justify-center gap-1 text-[11px] font-medium transition ${
+                className={`flex h-16 flex-col items-center justify-center gap-1 text-[13px] font-medium transition ${
                   active ? "text-primary-text" : "text-muted hover:text-ink"
                 }`}
                 aria-current={active ? "page" : undefined}

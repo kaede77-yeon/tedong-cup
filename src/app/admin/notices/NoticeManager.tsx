@@ -76,7 +76,7 @@ export function NoticeManager({ initial }: { initial: NoticeItem[] }) {
           >
             <div className="flex items-center gap-2">
               {i === 0 && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-primary-soft px-2 py-0.5 text-[11px] font-semibold text-primary-text">
+                <span className="inline-flex items-center gap-1 rounded-full bg-primary-soft px-2 py-0.5 text-[13px] font-semibold text-primary-text">
                   <Megaphone className="size-3" aria-hidden />
                   상단 노출 중
                 </span>
