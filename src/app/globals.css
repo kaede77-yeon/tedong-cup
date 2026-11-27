@@ -26,6 +26,11 @@
   --primary-text: #4f46e5; /* 표면 위 메인 컬러 글자 */
   --primary-soft: #eef2ff; /* 메인 연한 배경 */
   --highlight: #e0e7ff; /* 선택 선수 강조 */
+  /* 다음 경기 강조 (두 테마 공통 신호색: 은은한 보라) */
+  --next-soft: #f5f3ff;
+  --next-line: #c4b5fd;
+  --next-strong: #7c3aed;
+  --next-fg: #ffffff;
 
   --success: #059669;
   --danger: #dc2626;
@@ -74,6 +79,10 @@
     --primary-text: #a5b4fc;
     --primary-soft: rgb(99 102 241 / 0.16);
     --highlight: rgb(129 140 248 / 0.24);
+    --next-soft: rgb(139 92 246 / 0.14);
+    --next-line: rgb(167 139 250 / 0.55);
+    --next-strong: #8b5cf6;
+    --next-fg: #ffffff;
 
     --success: #34d399;
     --danger: #f87171;
@@ -187,6 +196,10 @@
   --color-primary-text: var(--primary-text);
   --color-primary-soft: var(--primary-soft);
   --color-highlight: var(--highlight);
+  --color-next-soft: var(--next-soft);
+  --color-next-line: var(--next-line);
+  --color-next-strong: var(--next-strong);
+  --color-next-fg: var(--next-fg);
   --color-success: var(--success);
   --color-danger: var(--danger);
   --color-danger-soft: var(--danger-soft);

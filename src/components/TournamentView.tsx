@@ -221,7 +221,7 @@ function MatchList({
                 게임 {m.order}
               </span>
               {isNext && (
-                <span className="rounded-full bg-primary px-2 text-[13px] leading-[18px] font-semibold text-primary-fg">
+                <span className="rounded-full bg-next-strong px-2 text-[13px] leading-[18px] font-semibold text-next-fg">
                   다음 경기
                 </span>
               )}
@@ -244,8 +244,13 @@ function MatchList({
           </>
         );
 
-        const cls = `block w-full rounded-card border bg-surface px-4 py-2 text-left shadow-xs transition ${
-          involved ? "border-primary ring-4 ring-primary/10" : isNext ? "border-primary/40" : "border-line"
+        // 다음 경기: 은은한 보라 배경 + 보라 테두리로 눈에 띄게 (선수 강조 중이면 강조 표시가 우선)
+        const cls = `block w-full rounded-card border px-4 py-2 text-left shadow-xs transition ${
+          involved
+            ? "border-primary bg-surface ring-4 ring-primary/10"
+            : isNext
+              ? "border-next-line bg-next-soft ring-4 ring-next-line/25"
+              : "border-line bg-surface"
         } ${dim ? "opacity-40" : ""}`;
 
         return (
