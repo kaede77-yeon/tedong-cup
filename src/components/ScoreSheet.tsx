@@ -54,7 +54,7 @@ export function ScoreSheet({
       <button
         key={side}
         onClick={() => setWinner(side)}
-        className={`flex min-h-[72px] w-full items-center justify-between gap-3 rounded-2xl border px-4 text-left shadow-xs transition active:scale-[0.99] ${
+        className={`flex min-h-[72px] w-full items-center justify-between gap-3 rounded-card border px-4 text-left shadow-xs transition active:scale-[0.99] ${
           selected
             ? "border-primary bg-primary-soft ring-4 ring-primary/10"
             : "border-line-strong bg-surface hover:bg-subtle"
@@ -110,7 +110,7 @@ export function ScoreSheet({
               key={n}
               disabled={winner === null}
               onClick={() => setLoserScore(n)}
-              className={`tabular h-12 rounded-xl border text-xl font-semibold shadow-xs transition active:scale-95 disabled:opacity-30 ${
+              className={`tabular h-12 rounded-btn border text-xl font-semibold shadow-xs transition active:scale-95 disabled:opacity-30 ${
                 loserScore === n
                   ? "border-primary bg-primary text-primary-fg shadow-primary/25"
                   : "border-line-strong bg-surface hover:bg-subtle"
@@ -123,7 +123,7 @@ export function ScoreSheet({
       </div>
 
       {ready && (
-        <p className="mt-5 rounded-xl bg-subtle px-3 py-2.5 text-center text-sm">
+        <p className="mt-5 rounded-box bg-subtle px-3 py-2.5 text-center text-sm">
           <span className={winner === "A" ? "font-semibold" : "text-muted"}>{teamName(match.teamA)}</span>
           <span className="tabular mx-2 text-base font-bold text-primary-text">
             {scoreA} : {scoreB}

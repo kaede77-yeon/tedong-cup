@@ -15,7 +15,7 @@ export default function MemberPage({ params }: PageProps<"/members/[id]">) {
 
 function Stat({ label, value, accent, wide }: { label: string; value: string | number; accent?: boolean; wide?: boolean }) {
   return (
-    <div className={`rounded-2xl border border-line bg-surface p-3.5 text-center shadow-xs ${wide ? "col-span-3" : ""}`}>
+    <div className={`rounded-card border border-line bg-surface p-3.5 text-center shadow-xs ${wide ? "col-span-3" : ""}`}>
       <p className="text-xs text-muted">{label}</p>
       <p className={`tabular mt-1 text-xl font-bold ${accent ? "text-primary-text" : ""}`}>{value}</p>
     </div>

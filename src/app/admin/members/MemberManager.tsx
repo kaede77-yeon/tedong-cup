@@ -116,7 +116,7 @@ export function MemberManager({ initial }: { initial: Member[] }) {
         </Card>
       )}
 
-      <ul className="mt-4 divide-y divide-line overflow-hidden rounded-2xl border border-line bg-surface shadow-xs">
+      <ul className="mt-4 divide-y divide-line overflow-hidden rounded-card border border-line bg-surface shadow-xs">
         {visible.length === 0 && <li className="p-8 text-center text-sm text-muted">회원이 없습니다.</li>}
         {visible.map((m) => (
           <li key={m.id} className={`flex items-center gap-1 py-1.5 pr-2 pl-4 ${m.isActive ? "" : "opacity-50"}`}>

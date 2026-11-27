@@ -65,14 +65,14 @@ export function NoticeManager({ initial }: { initial: NoticeItem[] }) {
 
       <ul className="mt-4 space-y-3">
         {notices.length === 0 && (
-          <li className="rounded-2xl border border-line bg-surface p-8 text-center text-sm text-muted shadow-xs">
+          <li className="rounded-card border border-line bg-surface p-8 text-center text-sm text-muted shadow-xs">
             등록된 공지사항이 없습니다.
           </li>
         )}
         {notices.map((n, i) => (
           <li
             key={n.id}
-            className={`rounded-2xl border bg-surface p-4 shadow-xs ${i === 0 ? "border-primary/40" : "border-line"}`}
+            className={`rounded-card border bg-surface p-4 shadow-xs ${i === 0 ? "border-primary/40" : "border-line"}`}
           >
             <div className="flex items-center gap-2">
               {i === 0 && (

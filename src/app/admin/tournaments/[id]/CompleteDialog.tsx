@@ -142,7 +142,7 @@ export function CompleteDialog({
                   <li key={person.code}>
                     <button
                       onClick={() => cycle(g.id, person.code)}
-                      className={`flex min-h-14 w-full items-center gap-2.5 rounded-xl border px-3 text-left shadow-xs transition active:scale-[0.98] ${
+                      className={`flex min-h-14 w-full items-center gap-2.5 rounded-box border px-3 text-left shadow-xs transition active:scale-[0.98] ${
                         place ? placeStyle[place.key] : "border-line-strong bg-surface hover:bg-subtle"
                       }`}
                       aria-label={`${person.displayName} ${place ? place.label : "선택 안 함"}`}

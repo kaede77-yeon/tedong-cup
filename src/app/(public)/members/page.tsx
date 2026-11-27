@@ -23,7 +23,7 @@ async function Ranking() {
 
   return (
     <div className="px-4">
-      <div className="overflow-hidden rounded-2xl border border-line bg-surface shadow-xs">
+      <div className="overflow-hidden rounded-card border border-line bg-surface shadow-xs">
         <table className="tabular w-full border-collapse text-center text-[16px]">
           <thead>
             <tr className="border-b border-line bg-subtle/60 text-[13px] font-medium text-muted">

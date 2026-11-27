@@ -5,7 +5,7 @@ type Variant = "primary" | "secondary" | "danger" | "ghost";
 const VARIANTS: Record<Variant, string> = {
   primary:
     "bg-primary text-primary-fg shadow-sm shadow-primary/25 hover:bg-primary-hover disabled:bg-subtle disabled:text-faint disabled:shadow-none",
-  secondary: "border border-line-strong bg-surface text-ink shadow-xs hover:bg-subtle disabled:text-faint",
+  secondary: "border border-btn2-line bg-btn2 text-ink shadow-xs hover:bg-btn2-hover disabled:text-faint",
   danger: "bg-danger text-white shadow-sm shadow-danger/25 hover:opacity-90 disabled:bg-subtle disabled:text-faint",
   ghost: "bg-transparent text-primary-text hover:bg-primary-soft",
 };
@@ -18,7 +18,7 @@ export function Button({
   return (
     <button
       type="button"
-      className={`inline-flex min-h-12 items-center justify-center gap-1.5 rounded-xl px-4 text-[17px] font-semibold transition active:scale-[0.98] disabled:cursor-not-allowed disabled:active:scale-100 ${VARIANTS[variant]} ${className}`}
+      className={`inline-flex min-h-12 items-center justify-center gap-1.5 rounded-btn px-5 text-[17px] font-semibold transition active:scale-[0.98] disabled:cursor-not-allowed disabled:active:scale-100 ${VARIANTS[variant]} ${className}`}
       {...props}
     />
   );
@@ -34,7 +34,7 @@ export function PageTitle({ children, sub }: { children: ReactNode; sub?: ReactN
 }
 
 export function Card({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return <div className={`rounded-2xl border border-line bg-surface shadow-xs ${className}`}>{children}</div>;
+  return <div className={`rounded-card border border-line bg-surface shadow-xs ${className}`}>{children}</div>;
 }
 
 export function SectionTitle({ children, aside }: { children: ReactNode; aside?: ReactNode }) {
@@ -67,7 +67,7 @@ export function Notice({ tone = "info", children }: { tone?: "info" | "muted" | 
     warning: "bg-warning-soft text-warning",
     danger: "bg-danger-soft text-danger",
   };
-  return <p className={`flex items-start gap-2 rounded-xl px-3.5 py-2.5 text-sm font-medium ${tones[tone]}`}>{children}</p>;
+  return <p className={`flex items-start gap-2 rounded-box px-3.5 py-2.5 text-sm font-medium ${tones[tone]}`}>{children}</p>;
 }
 
 export function Empty({ children }: { children: ReactNode }) {

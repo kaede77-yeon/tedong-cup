@@ -18,7 +18,7 @@ export function NoTournament() {
         className="object-cover object-top"
       />
       <div className="absolute inset-0 flex items-center justify-center px-6">
-        <p className="rounded-2xl border border-line bg-surface/85 px-5 py-4 text-center text-base leading-relaxed font-semibold text-ink shadow-lg backdrop-blur-md">
+        <p className="rounded-card border border-line bg-surface/85 px-5 py-4 text-center text-base leading-relaxed font-semibold text-ink shadow-lg backdrop-blur-md">
           현재 진행중인 대회가 없습니다.
           <br />
           대회를 생성해주세요.

@@ -113,7 +113,7 @@ export function GroupWizard({
       <div
         key={side ?? "all"}
         onClick={() => side && setTarget(side)}
-        className={`rounded-2xl border p-4 shadow-xs transition ${
+        className={`rounded-card border p-4 shadow-xs transition ${
           isAB && active ? "border-primary bg-primary-soft ring-4 ring-primary/10" : "border-line bg-surface"
         } ${isAB ? "cursor-pointer" : ""}`}
       >
@@ -207,7 +207,7 @@ export function GroupWizard({
                       setEntries([]);
                     }
                   }}
-                  className={`block w-full rounded-2xl border p-4 text-left shadow-xs transition active:scale-[0.99] ${
+                  className={`block w-full rounded-card border p-4 text-left shadow-xs transition active:scale-[0.99] ${
                     method === m
                       ? "border-primary bg-primary-soft ring-4 ring-primary/10"
                       : "border-line bg-surface hover:border-line-strong"
@@ -231,7 +231,7 @@ export function GroupWizard({
                       setSize(n);
                       setEntries((prev) => (prev.length > n ? [] : prev));
                     }}
-                    className={`tabular h-14 rounded-xl border text-lg font-semibold shadow-xs transition active:scale-95 ${
+                    className={`tabular h-14 rounded-btn border text-lg font-semibold shadow-xs transition active:scale-95 ${
                       size === n
                         ? "border-primary bg-primary text-primary-fg shadow-primary/25"
                         : "border-line-strong bg-surface hover:bg-subtle"
@@ -256,7 +256,7 @@ export function GroupWizard({
                 entryList()
               )}
 
-              <div className="rounded-2xl border border-line bg-surface p-4 shadow-xs">
+              <div className="rounded-card border border-line bg-surface p-4 shadow-xs">
                 <p className="text-sm font-semibold">
                   명부에서 불러오기{" "}
                   {isAB && <span className="font-medium text-primary-text">→ {target}그룹에 추가</span>}
@@ -291,7 +291,7 @@ export function GroupWizard({
                 )}
               </div>
 
-              <div className="rounded-2xl border border-line bg-surface p-4 shadow-xs">
+              <div className="rounded-card border border-line bg-surface p-4 shadow-xs">
                 <p className="text-sm font-semibold">직접 입력 (게스트·신규)</p>
                 <div className="mt-3 flex gap-2">
                   <input
@@ -320,7 +320,7 @@ export function GroupWizard({
 
           {step === 4 && size && (
             <div className="space-y-3">
-              <dl className="divide-y divide-line rounded-2xl border border-line bg-surface text-[17px] shadow-xs">
+              <dl className="divide-y divide-line rounded-card border border-line bg-surface text-[17px] shadow-xs">
                 {(
                   [
                     ["그룹", name],

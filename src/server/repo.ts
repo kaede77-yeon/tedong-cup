@@ -7,6 +7,7 @@ import { compareMemberStats, computeMemberStats, type MemberStats, type Tourname
 import { isPlayed, validateScore } from "@/lib/score";
 import { groupStandings, type StandingTable } from "@/lib/standings";
 import type { Awards, Group, Match, MatchMethod, Member, NoticeItem, Side, Tournament } from "@/lib/types";
+import type { SiteTheme } from "@/lib/theme";
 import { getDb } from "./db";
 import { badRequest, conflict, HttpError, notFound } from "./errors";
 
@@ -530,4 +531,26 @@ export async function deleteNotice(id: string): Promise<void> {
   const db = await getDb();
   const r = await notices(db).deleteOne({ _id: oid(id, "공지사항") });
   if (r.deletedCount === 0) throw notFound("공지사항");
+}
+
+// ───────────────────────── 사이트 설정 ─────────────────────────
+
+interface SettingsDoc {
+  _id: "site";
+  theme: SiteTheme;
+  updatedAt: Date;
+}
+
+const settings = (db: Db) => db.collection<SettingsDoc>("settings");
+
+export async function getSiteTheme(): Promise<SiteTheme> {
+  const db = await getDb();
+  const d = await settings(db).findOne({ _id: "site" });
+  return d?.theme ?? "default";
+}
+
+export async function setSiteTheme(theme: SiteTheme): Promise<{ theme: SiteTheme }> {
+  const db = await getDb();
+  await settings(db).updateOne({ _id: "site" }, { $set: { theme, updatedAt: new Date() } }, { upsert: true });
+  return { theme };
 }

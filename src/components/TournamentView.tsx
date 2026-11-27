@@ -90,7 +90,7 @@ export function TournamentView({ initial, admin = false, groupActions, showHeade
               <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${progress}%` }} />
             </div>
             {/* 대진표/순위표 세그먼트 */}
-            <div className="mt-3 grid grid-cols-2 rounded-xl bg-subtle p-1" role="tablist">
+            <div className="mt-3 grid grid-cols-2 rounded-tab bg-subtle p-1" role="tablist">
               {(
                 [
                   ["matches", "대진표"],
@@ -102,8 +102,8 @@ export function TournamentView({ initial, admin = false, groupActions, showHeade
                   role="tab"
                   aria-selected={tab === k}
                   onClick={() => setTab(k)}
-                  className={`h-10 rounded-lg text-sm font-semibold transition ${
-                    tab === k ? "bg-raised text-ink shadow-sm" : "text-muted hover:text-ink"
+                  className={`h-10 rounded-tab-item text-sm font-semibold transition ${
+                    tab === k ? "bg-tab-on text-tab-on-fg shadow-sm" : "text-muted hover:text-ink"
                   }`}
                 >
                   {label}
@@ -154,7 +154,7 @@ function FocusBar({ group, code, onClear }: { group: GroupView; code: string; on
   const name = useNames(group).get(code);
   const mine = group.matches.filter((m) => [...m.teamA, ...m.teamB].includes(code)).map((m) => m.order);
   return (
-    <div className="mx-4 mt-3 flex items-center justify-between gap-2 rounded-xl bg-highlight px-3.5 py-2">
+    <div className="mx-4 mt-3 flex items-center justify-between gap-2 rounded-box bg-highlight px-3.5 py-2">
       <p className="text-sm">
         <span className="font-semibold">{name}</span>
         <span className="text-muted"> · {mine.map((o) => `${o}번`).join(", ")} 경기</span>
@@ -244,7 +244,7 @@ function MatchList({
           </>
         );
 
-        const cls = `block w-full rounded-2xl border bg-surface px-4 py-2 text-left shadow-xs transition ${
+        const cls = `block w-full rounded-card border bg-surface px-4 py-2 text-left shadow-xs transition ${
           involved ? "border-primary ring-4 ring-primary/10" : isNext ? "border-primary/40" : "border-line"
         } ${dim ? "opacity-40" : ""}`;
 
@@ -302,7 +302,7 @@ function StandingsTable({
               <span className="text-xs text-muted">{rows.length}명 · 조 안에서 순위 비교</span>
             </div>
           )}
-          <div className="overflow-hidden rounded-2xl border border-line bg-surface shadow-xs">
+          <div className="overflow-hidden rounded-card border border-line bg-surface shadow-xs">
             <table className="tabular w-full border-collapse text-center text-[16px]">
               <thead>
                 <tr className="border-b border-line bg-subtle/60 text-[13px] font-medium text-muted">

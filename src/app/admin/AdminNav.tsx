@@ -1,6 +1,6 @@
 "use client";
 
-import { LogOut } from "lucide-react";
+import { LogOut, Palette } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { api } from "@/lib/client";
@@ -15,7 +15,7 @@ function Bar({ pathname }: { pathname: string | null }) {
   const onLogin = pathname === "/admin/login";
   return (
     <div className="flex items-center gap-2 px-4 pt-3">
-      <nav className="grid flex-1 grid-cols-3 rounded-xl bg-subtle p-1" aria-label="관리 메뉴">
+      <nav className="grid flex-1 grid-cols-3 rounded-tab bg-subtle p-1" aria-label="관리 메뉴">
         {LINKS.map((l) => {
           const active = pathname !== null && l.match(pathname);
           return (
@@ -23,8 +23,8 @@ function Bar({ pathname }: { pathname: string | null }) {
               key={l.href}
               href={l.href}
               aria-current={active ? "page" : undefined}
-              className={`grid h-9 place-items-center rounded-lg text-sm font-semibold transition ${
-                active ? "bg-raised text-ink shadow-sm" : "text-muted hover:text-ink"
+              className={`grid h-9 place-items-center rounded-tab-item text-sm font-semibold transition ${
+                active ? "bg-tab-on text-tab-on-fg shadow-sm" : "text-muted hover:text-ink"
               }`}
             >
               {l.label}
@@ -33,8 +33,21 @@ function Bar({ pathname }: { pathname: string | null }) {
         })}
       </nav>
       {pathname !== null && !onLogin && (
+        <Link
+          href="/admin/settings"
+          aria-label="화면 테마"
+          title="화면 테마"
+          aria-current={pathname.startsWith("/admin/settings") ? "page" : undefined}
+          className={`-mr-2 grid size-11 shrink-0 place-items-center rounded-btn transition hover:bg-subtle hover:text-ink ${
+            pathname.startsWith("/admin/settings") ? "text-ink" : "text-muted"
+          }`}
+        >
+          <Palette className="size-5" />
+        </Link>
+      )}
+      {pathname !== null && !onLogin && (
         <button
-          className="grid size-11 place-items-center rounded-xl text-muted transition hover:bg-subtle hover:text-ink"
+          className="grid size-11 place-items-center rounded-btn text-muted transition hover:bg-subtle hover:text-ink"
           aria-label="로그아웃"
           title="로그아웃"
           onClick={async () => {

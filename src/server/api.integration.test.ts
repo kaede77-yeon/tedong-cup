@@ -2,7 +2,11 @@
 import { MongoMemoryServer } from "mongodb-memory-server";
 import { MongoClient } from "mongodb";
 import { NextRequest } from "next/server";
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+
+// Next 캐시 무효화는 테스트 환경에 런타임이 없으므로 호출 여부만 검사
+const { revalidateTag } = vi.hoisted(() => ({ revalidateTag: vi.fn() }));
+vi.mock("next/cache", () => ({ revalidateTag }));
 
 process.env.ADMIN_PASSWORD = "test-pw";
 process.env.SESSION_SECRET = "test-secret";
@@ -23,6 +27,7 @@ const statsRoute = await import("@/app/api/stats/members/route");
 const hofRoute = await import("@/app/api/hall-of-fame/route");
 const noticesRoute = await import("@/app/api/notices/route");
 const noticeRoute = await import("@/app/api/notices/[id]/route");
+const settingsRoute = await import("@/app/api/settings/route");
 
 let mongod: MongoMemoryServer;
 let client: MongoClient;
@@ -40,7 +45,7 @@ afterAll(async () => {
 
 beforeEach(async () => {
   const db = await getDb();
-  await Promise.all(["members", "tournaments", "groups", "notices"].map((c) => db.collection(c).deleteMany({})));
+  await Promise.all(["members", "tournaments", "groups", "notices", "settings"].map((c) => db.collection(c).deleteMany({})));
 });
 
 const admin = `${SESSION_COOKIE}=${createSessionToken()}`;
@@ -339,6 +344,18 @@ describe("대회 전체 흐름", () => {
     expect((await noticeRoute.DELETE(req("DELETE", "/"), ctx({ id: b.id }))).status).toBe(204);
     expect((await noticeRoute.DELETE(req("DELETE", "/"), ctx({ id: b.id }))).status).toBe(404);
     expect(await json(await noticesRoute.GET())).toHaveLength(1);
+  });
+
+  it("사이트 테마: 기본값 default, 관리자만 변경 가능, 변경 시 캐시 무효화", async () => {
+    expect(await json(await settingsRoute.GET())).toEqual({ theme: "default" });
+    expect((await settingsRoute.PATCH(req("PATCH", "/", { theme: "nike" }, false))).status).toBe(401);
+    expect((await settingsRoute.PATCH(req("PATCH", "/", { theme: "rainbow" }))).status).toBe(400);
+    revalidateTag.mockClear();
+    expect(await json(await settingsRoute.PATCH(req("PATCH", "/", { theme: "nike" })))).toEqual({ theme: "nike" });
+    expect(revalidateTag).toHaveBeenCalledWith("site-theme", { expire: 0 });
+    expect(await json(await settingsRoute.GET())).toEqual({ theme: "nike" });
+    await settingsRoute.PATCH(req("PATCH", "/", { theme: "default" }));
+    expect(await json(await settingsRoute.GET())).toEqual({ theme: "default" });
   });
 
   it("잘못된 ObjectId는 404", async () => {

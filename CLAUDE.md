@@ -48,7 +48,12 @@
 - **API 설계:** Next.js Route Handlers (`src/app/api/...`)를 사용하며, 쓰기(POST/PATCH/DELETE) 요청은 반드시 관리자 인증 미들웨어/검증을 거친다.
 - **비즈니스 로직 분리:** 순위 계산(`calculateStandings`) 및 한울 대진표 생성(`generateMatches`) 로직은 순수 함수(`src/lib/...`)로 분리하여 테스트 가능하게 작성한다.
 - **모바일 UX:** 모든 핵심 화면(대진표, 순위표, 점수 입력 모달)은 375px~430px 모바일 뷰포트 기준으로 한 손 조작이 편하게 설계한다.
-- **디자인 시스템 (모던 미니멀 · 인디고 #4F46E5 · 라이트/다크 자동):**
+- **디자인 시스템 (테마 2종 · 관리자 선택 · 라이트/다크 자동):**
+  - 관리자가 `/admin/settings`에서 고른 테마가 `<html data-theme="default|nike">`로 모든 화면에 적용된다 (DB `settings` 컬렉션, `getCachedSiteTheme` 캐시 + `revalidateTag("site-theme")`).
+    - `default`: 모던 미니멀 · 인디고 #4F46E5 · 둥근 카드 · 은은한 그림자
+    - `nike`: `DESIGN.md` 기반 블랙 & 화이트 · 알약 버튼 · 모서리 0 카드 · 그림자 없음 (다크모드는 흑백 반전)
+  - 두 테마를 모두 지원하도록 모양도 토큰으로 쓴다: 카드·목록 `rounded-card`, 버튼 `rounded-btn`, 안내·요약 박스 `rounded-box`, 세그먼트 탭 `rounded-tab`/`rounded-tab-item` + 선택 `bg-tab-on text-tab-on-fg`, 보조 버튼 `bg-btn2 border-btn2-line`. `rounded-2xl` 같은 고정 모서리로 카드를 만들지 않는다.
+  - 글자 크기는 `globals.css`에서 Tailwind 기본값보다 15% 키워 두었다 (`text-xs`~`text-3xl`).
   - 색상은 `src/app/globals.css`의 의미 토큰만 사용한다 (`bg-bg/surface/subtle/raised`, `text-ink/muted/faint`, `border-line/line-strong`, `primary`/`primary-text`/`primary-soft`, `success/danger/warning`, `gold/silver/bronze`). `bg-white`, `text-gray-*` 등 원시 색상 클래스 금지 — 다크모드가 깨진다.
   - 공통 부품 재사용: `Button`·`Card`·`Notice`·`PageTitle`·`SectionTitle`(`components/ui.tsx`), 하단 시트 `Sheet`, 입력창 `.input`, 칩 `.chip`/`.chip-on`.
   - 아이콘은 `lucide-react`. 이모지는 메달(🥇🥈🥉)에만 사용. 폰트는 Pretendard(dynamic subset).

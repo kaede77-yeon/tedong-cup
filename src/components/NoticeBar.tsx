@@ -85,7 +85,7 @@ export function NoticeBar({ notices }: { notices: NoticeItem[] }) {
               <button
                 type="button"
                 onClick={() => setIndex(index + 1)}
-                className="mt-5 flex min-h-11 w-full items-center gap-2 rounded-xl border border-line bg-subtle px-3.5 text-left transition hover:border-line-strong"
+                className="mt-5 flex min-h-11 w-full items-center gap-2 rounded-box border border-line bg-subtle px-3.5 text-left transition hover:border-line-strong"
               >
                 <span className="shrink-0 text-xs font-semibold text-muted">다음글</span>
                 <span className="min-w-0 flex-1 truncate text-sm font-medium text-ink">{notices[index + 1].title}</span>

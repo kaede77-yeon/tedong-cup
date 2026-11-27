@@ -29,7 +29,7 @@ export function LoginForm() {
   }
 
   return (
-    <form onSubmit={submit} className="mx-4 space-y-4 rounded-2xl border border-line bg-surface p-5 shadow-xs">
+    <form onSubmit={submit} className="mx-4 space-y-4 rounded-card border border-line bg-surface p-5 shadow-xs">
       <label className="block">
         <span className="text-sm font-medium text-muted">비밀번호</span>
         <input

@@ -66,3 +66,7 @@ const noticeContent = z.string().trim().max(2000, "내용은 2000자 이내로 �
 export const noticeCreateSchema = z.object({ title: noticeTitle, content: noticeContent.default("") });
 
 export const noticePatchSchema = z.object({ title: noticeTitle.optional(), content: noticeContent.optional() });
+
+export const settingsPatchSchema = z.object({
+  theme: z.enum(["default", "nike"], { message: "지원하지 않는 테마입니다." }),
+});
