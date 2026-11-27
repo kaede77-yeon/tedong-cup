@@ -234,9 +234,8 @@ export async function getTournamentDetail(id: string): Promise<TournamentDetail>
 /** 진행 중인 대회 중 최신 1건 (없으면 가장 최근 대회) */
 export async function getFeaturedTournamentId(): Promise<string | null> {
   const db = await getDb();
-  const t =
-    (await tournaments(db).findOne({ status: "IN_PROGRESS" }, { sort: { date: -1, _id: -1 } })) ??
-    (await tournaments(db).findOne({}, { sort: { date: -1, _id: -1 } }));
+  // 진행 중인 대회만 대상 (없으면 홈 화면에서 안내 화면을 표시)
+  const t = await tournaments(db).findOne({ status: "IN_PROGRESS" }, { sort: { date: -1, _id: -1 } });
   return t ? t._id.toHexString() : null;
 }
 
@@ -265,12 +264,16 @@ export async function updateTournament(id: string, patch: { title?: string; date
 export async function deleteTournament(id: string): Promise<void> {
   const db = await getDb();
   const _id = oid(id, "대회");
-  await requireOpenTournament(db, _id);
-  const scored = await groups(db).countDocuments(
-    { tournamentId: _id, matches: { $elemMatch: { scoreA: { $ne: null } } } },
-    { limit: 1 },
-  );
-  if (scored > 0) throw conflict("점수가 입력된 대회는 삭제할 수 없습니다.");
+  const t = await tournaments(db).findOne({ _id });
+  if (!t) throw notFound("대회");
+  // 종료된 대회는 기록째 삭제 가능. 진행 중 대회는 실수 방지를 위해 점수가 없을 때만 삭제
+  if (t.status !== "COMPLETED") {
+    const scored = await groups(db).countDocuments(
+      { tournamentId: _id, matches: { $elemMatch: { scoreA: { $ne: null } } } },
+      { limit: 1 },
+    );
+    if (scored > 0) throw conflict("점수가 입력된 진행 중 대회는 삭제할 수 없습니다.");
+  }
   await groups(db).deleteMany({ tournamentId: _id });
   await tournaments(db).deleteOne({ _id });
 }

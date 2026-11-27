@@ -299,6 +299,27 @@ describe("대회 전체 흐름", () => {
     expect((await tournamentRoute.DELETE(req("DELETE", "/"), ctx({ id: t.id }))).status).toBe(204);
   });
 
+  it("종료된 대회는 점수·수상 기록이 있어도 삭제 가능, 통계에서도 제외", async () => {
+    const ids = await seedMembers(6);
+    const t = await newTournament();
+    const g = await json(
+      await groupsRoute.POST(
+        req("POST", "/", { name: "금배조", method: "HANUL_AA", size: 6, entries: ids.map((id) => ({ memberId: id, displayName: "x" })) }),
+        ctx({ id: t.id }),
+      ),
+    );
+    await matchRoute.PATCH(req("PATCH", "/", { scoreA: 6, scoreB: 2 }), ctx({ id: g.id, order: "1" }));
+    await completeRoute.POST(
+      req("POST", "/", { awards: { [g.id]: { winners: ["1", "2"], runnersUp: ["3", "4"] } } }),
+      ctx({ id: t.id }),
+    );
+    expect((await tournamentRoute.DELETE(req("DELETE", "/", undefined, false), ctx({ id: t.id }))).status).toBe(401);
+    expect((await tournamentRoute.DELETE(req("DELETE", "/"), ctx({ id: t.id }))).status).toBe(204);
+    expect((await tournamentRoute.GET(req("GET", "/", undefined, false), ctx({ id: t.id }))).status).toBe(404);
+    const hof = await json(await hofRoute.GET(req("GET", "/api/hall-of-fame", undefined, false)));
+    expect(hof).toHaveLength(0);
+  });
+
   it("잘못된 ObjectId는 404", async () => {
     expect((await tournamentRoute.GET(req("GET", "/", undefined, false), ctx({ id: "nope" }))).status).toBe(404);
   });

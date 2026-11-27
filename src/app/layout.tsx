@@ -31,9 +31,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             </Link>
             <Link
               href="/admin"
-              className="rounded-lg px-3 py-1.5 text-sm font-medium text-muted transition hover:bg-subtle hover:text-ink"
+              className="-my-1 inline-flex h-9 items-center rounded-full border border-line-strong bg-surface px-4 text-sm font-semibold text-ink shadow-xs transition hover:border-primary hover:text-primary-text active:scale-[0.97]"
             >
-              관리
+              관리자
             </Link>
           </header>
           <main className="flex-1 pb-8">{children}</main>

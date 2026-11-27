@@ -5,8 +5,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const TABS: { href: string; label: string; icon: LucideIcon; match: (p: string) => boolean }[] = [
-  { href: "/", label: "진행중", icon: Zap, match: (p) => p === "/" },
-  { href: "/tournaments", label: "대회기록", icon: CalendarDays, match: (p) => p.startsWith("/tournaments") },
+  { href: "/", label: "대회진행", icon: Zap, match: (p) => p === "/" },
+  { href: "/tournaments", label: "지난대회기록", icon: CalendarDays, match: (p) => p.startsWith("/tournaments") },
   { href: "/hall-of-fame", label: "명예의전당", icon: Trophy, match: (p) => p.startsWith("/hall-of-fame") },
   { href: "/members", label: "개인통계", icon: BarChart3, match: (p) => p.startsWith("/members") },
 ];

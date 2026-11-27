@@ -140,6 +140,24 @@ export function AdminTournament({ initial, members }: { initial: TournamentDetai
             잠금 해제
           </Button>
         )}
+        {!open && (
+          <Button
+            variant="ghost"
+            className="w-full text-danger"
+            onClick={() =>
+              confirm(
+                "종료된 대회를 삭제할까요?\n대진·점수·수상 기록이 모두 지워지고 명예의 전당·개인 통계에서도 빠집니다. 되돌릴 수 없습니다.",
+              ) &&
+              act(async () => {
+                await api(`/api/tournaments/${tournament.id}`, "DELETE");
+                router.replace("/admin");
+              })
+            }
+          >
+            <Trash2 className="size-4" />
+            대회 삭제
+          </Button>
+        )}
       </div>
 
       {wizard && (
