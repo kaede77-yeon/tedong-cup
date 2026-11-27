@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
+import { LogoIcon } from "@/components/LogoIcon";
 import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 import "./globals.css";
 
@@ -24,10 +25,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <div className="mx-auto flex min-h-dvh max-w-[480px] flex-col">
           <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-line bg-bg/80 px-4 backdrop-blur-md">
             <Link href="/" className="flex items-center gap-2 text-[17px] font-bold tracking-tight">
-              <span className="grid size-7 place-items-center rounded-lg bg-primary text-sm font-bold text-primary-fg shadow-sm shadow-primary/30">
-                테
-              </span>
-              테동회 월례대회
+              <LogoIcon />
+              테동회 대회관리
             </Link>
             <Link
               href="/admin"

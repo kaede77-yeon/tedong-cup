@@ -196,7 +196,7 @@ function MatchList({
         const isNext = m.order === next && !played;
 
         const team = (codes: [string, string], win: boolean, align: "left" | "right") => (
-          <div className={`flex min-w-0 flex-1 flex-col gap-0.5 ${align === "right" ? "items-end text-right" : "items-start"}`}>
+          <div className={`flex min-w-0 flex-1 flex-col ${align === "right" ? "items-end text-right" : "items-start"}`}>
             {codes.map((c) => (
               <button
                 key={c}
@@ -204,7 +204,7 @@ function MatchList({
                   e.stopPropagation();
                   onFocus(c);
                 }}
-                className={`max-w-full truncate rounded-md px-1.5 py-0.5 text-[16px] leading-snug transition ${
+                className={`max-w-full truncate rounded-md px-1.5 text-[16px] leading-tight transition ${
                   win ? "font-semibold text-ink" : played ? "text-muted" : "font-medium text-ink"
                 } ${focus === c ? "bg-highlight" : "hover:bg-subtle"}`}
               >
@@ -217,14 +217,16 @@ function MatchList({
         const body = (
           <>
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-muted">게임 {m.order}</span>
+              <span className="tabular rounded-full border border-primary/20 bg-primary-soft px-2.5 text-xs leading-[18px] font-semibold text-primary-text">
+                게임 {m.order}
+              </span>
               {isNext && (
-                <span className="rounded-full bg-primary-soft px-2 py-0.5 text-[11px] font-semibold text-primary-text">
+                <span className="rounded-full bg-primary px-2 text-[11px] leading-[18px] font-semibold text-primary-fg">
                   다음 경기
                 </span>
               )}
             </div>
-            <div className="mt-2 flex items-center gap-2">
+            <div className="mt-1 flex items-center gap-2">
               {team(m.teamA, aWin, "left")}
               <div className="tabular flex w-[84px] shrink-0 items-center justify-center gap-1.5 text-[28px] leading-none font-bold">
                 {played ? (
@@ -242,7 +244,7 @@ function MatchList({
           </>
         );
 
-        const cls = `block w-full rounded-2xl border bg-surface p-4 text-left shadow-xs transition ${
+        const cls = `block w-full rounded-2xl border bg-surface px-4 py-2 text-left shadow-xs transition ${
           involved ? "border-primary ring-4 ring-primary/10" : isNext ? "border-primary/40" : "border-line"
         } ${dim ? "opacity-40" : ""}`;
 
@@ -329,9 +331,10 @@ function StandingsTable({
                         </span>
                       </td>
                       <td className="max-w-0 text-left">
-                        <button onClick={() => onFocus(r.code)} className="block w-full truncate py-1 text-left text-[15px] font-medium">
-                          {medal(r.code) && <span className="mr-1">{medal(r.code)}</span>}
-                          {r.displayName}
+                        <button onClick={() => onFocus(r.code)} className="flex w-full items-center py-1 text-left text-[15px] font-medium">
+                          {/* 이름이 길어 잘려도 메달은 항상 보이도록 이름만 truncate */}
+                          <span className="truncate">{r.displayName}</span>
+                          {medal(r.code) && <span className="ml-1 shrink-0">{medal(r.code)}</span>}
                         </button>
                       </td>
                       <td className="text-muted">{r.played}</td>
