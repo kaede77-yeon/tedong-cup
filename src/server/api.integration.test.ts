@@ -21,6 +21,8 @@ const reopenRoute = await import("@/app/api/tournaments/[id]/reopen/route");
 const matchRoute = await import("@/app/api/groups/[id]/matches/[order]/route");
 const statsRoute = await import("@/app/api/stats/members/route");
 const hofRoute = await import("@/app/api/hall-of-fame/route");
+const noticesRoute = await import("@/app/api/notices/route");
+const noticeRoute = await import("@/app/api/notices/[id]/route");
 
 let mongod: MongoMemoryServer;
 let client: MongoClient;
@@ -38,7 +40,7 @@ afterAll(async () => {
 
 beforeEach(async () => {
   const db = await getDb();
-  await Promise.all(["members", "tournaments", "groups"].map((c) => db.collection(c).deleteMany({})));
+  await Promise.all(["members", "tournaments", "groups", "notices"].map((c) => db.collection(c).deleteMany({})));
 });
 
 const admin = `${SESSION_COOKIE}=${createSessionToken()}`;
@@ -318,6 +320,25 @@ describe("대회 전체 흐름", () => {
     expect((await tournamentRoute.GET(req("GET", "/", undefined, false), ctx({ id: t.id }))).status).toBe(404);
     const hof = await json(await hofRoute.GET(req("GET", "/api/hall-of-fame", undefined, false)));
     expect(hof).toHaveLength(0);
+  });
+
+  it("공지사항: 관리자만 쓰기·수정·삭제, 목록은 최신순 공개", async () => {
+    expect((await noticesRoute.POST(req("POST", "/", { title: "x" }, false))).status).toBe(401);
+    expect((await noticesRoute.POST(req("POST", "/", { title: "  " }))).status).toBe(400);
+    const a = await json(await noticesRoute.POST(req("POST", "/", { title: "첫 공지", content: "본문" })));
+    const b = await json(await noticesRoute.POST(req("POST", "/", { title: "둘째 공지" })));
+    expect(b.content).toBe("");
+    const list = await json(await noticesRoute.GET());
+    expect(list.map((n: { title: string }) => n.title)).toEqual(["둘째 공지", "첫 공지"]);
+
+    expect((await noticeRoute.PATCH(req("PATCH", "/", { title: "y" }, false), ctx({ id: a.id }))).status).toBe(401);
+    const edited = await json(await noticeRoute.PATCH(req("PATCH", "/", { content: "수정 본문" }), ctx({ id: a.id })));
+    expect(edited).toMatchObject({ title: "첫 공지", content: "수정 본문" });
+
+    expect((await noticeRoute.DELETE(req("DELETE", "/", undefined, false), ctx({ id: b.id }))).status).toBe(401);
+    expect((await noticeRoute.DELETE(req("DELETE", "/"), ctx({ id: b.id }))).status).toBe(204);
+    expect((await noticeRoute.DELETE(req("DELETE", "/"), ctx({ id: b.id }))).status).toBe(404);
+    expect(await json(await noticesRoute.GET())).toHaveLength(1);
   });
 
   it("잘못된 ObjectId는 404", async () => {

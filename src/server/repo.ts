@@ -6,7 +6,7 @@ import { isSupported } from "@/lib/hanulRules";
 import { compareMemberStats, computeMemberStats, type MemberStats, type TournamentRecord } from "@/lib/memberStats";
 import { isPlayed, validateScore } from "@/lib/score";
 import { groupStandings, type StandingTable } from "@/lib/standings";
-import type { Awards, Group, Match, MatchMethod, Member, Side, Tournament } from "@/lib/types";
+import type { Awards, Group, Match, MatchMethod, Member, NoticeItem, Side, Tournament } from "@/lib/types";
 import { getDb } from "./db";
 import { badRequest, conflict, HttpError, notFound } from "./errors";
 
@@ -478,4 +478,56 @@ export async function getMemberDetail(id: string): Promise<{ member: Member; sta
 export async function getHallOfFame(year?: number) {
   const db = await getDb();
   return buildHallOfFame(await completedRecords(db), year);
+}
+
+// ───────────────────────── 공지사항 ─────────────────────────
+
+interface NoticeDoc {
+  title: string;
+  content: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const notices = (db: Db) => db.collection<NoticeDoc>("notices");
+
+const toNotice = (d: WithId<NoticeDoc>): NoticeItem => ({
+  id: d._id.toHexString(),
+  title: d.title,
+  content: d.content,
+  createdAt: d.createdAt.toISOString(),
+  updatedAt: d.updatedAt.toISOString(),
+});
+
+/** 최신순. 사용자 화면 한줄 공지는 첫 번째 항목을 표시하고, 나머지는 이전/다음글로 이동 */
+export async function listNotices(): Promise<NoticeItem[]> {
+  const db = await getDb();
+  const docs = await notices(db).find().sort({ createdAt: -1, _id: -1 }).toArray();
+  return docs.map(toNotice);
+}
+
+
+export async function createNotice(input: { title: string; content: string }): Promise<NoticeItem> {
+  const db = await getDb();
+  const now = new Date();
+  const doc: NoticeDoc = { title: input.title, content: input.content, createdAt: now, updatedAt: now };
+  const { insertedId } = await notices(db).insertOne(doc);
+  return toNotice({ ...doc, _id: insertedId });
+}
+
+export async function updateNotice(id: string, patch: { title?: string; content?: string }): Promise<NoticeItem> {
+  const db = await getDb();
+  const d = await notices(db).findOneAndUpdate(
+    { _id: oid(id, "공지사항") },
+    { $set: { ...patch, updatedAt: new Date() } },
+    { returnDocument: "after" },
+  );
+  if (!d) throw notFound("공지사항");
+  return toNotice(d);
+}
+
+export async function deleteNotice(id: string): Promise<void> {
+  const db = await getDb();
+  const r = await notices(db).deleteOne({ _id: oid(id, "공지사항") });
+  if (r.deletedCount === 0) throw notFound("공지사항");
 }

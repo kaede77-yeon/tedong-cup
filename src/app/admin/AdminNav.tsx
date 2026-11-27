@@ -8,13 +8,14 @@ import { api } from "@/lib/client";
 const LINKS = [
   { href: "/admin", label: "대회 운영", match: (p: string) => p === "/admin" || p.startsWith("/admin/tournaments") },
   { href: "/admin/members", label: "회원 명부", match: (p: string) => p.startsWith("/admin/members") },
+  { href: "/admin/notices", label: "공지사항", match: (p: string) => p.startsWith("/admin/notices") },
 ];
 
 function Bar({ pathname }: { pathname: string | null }) {
   const onLogin = pathname === "/admin/login";
   return (
     <div className="flex items-center gap-2 px-4 pt-3">
-      <nav className="grid flex-1 grid-cols-2 rounded-xl bg-subtle p-1" aria-label="관리 메뉴">
+      <nav className="grid flex-1 grid-cols-3 rounded-xl bg-subtle p-1" aria-label="관리 메뉴">
         {LINKS.map((l) => {
           const active = pathname !== null && l.match(pathname);
           return (

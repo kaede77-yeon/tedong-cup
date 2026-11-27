@@ -59,3 +59,10 @@ export const completeSchema = z.object({
     }),
   ),
 });
+
+const noticeTitle = z.string().trim().min(1, "제목을 입력해 주세요.").max(60, "제목은 60자 이내로 입력해 주세요.");
+const noticeContent = z.string().trim().max(2000, "내용은 2000자 이내로 입력해 주세요.");
+
+export const noticeCreateSchema = z.object({ title: noticeTitle, content: noticeContent.default("") });
+
+export const noticePatchSchema = z.object({ title: noticeTitle.optional(), content: noticeContent.optional() });
